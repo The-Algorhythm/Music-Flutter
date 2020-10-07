@@ -10,16 +10,23 @@ class BottomToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-//          _getIcon(icon: MusicAppIcons.home, active: false),
-          _getIcon(icon: MusicAppIcons.discover, active: true),
-          _getIcon(icon: MusicAppIcons.profile, active: false),
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Divider(
+            color: Colors.white,
+            thickness: 0.5),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15.0, top: 5.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+  //          _getIcon(icon: MusicAppIcons.home, active: false),
+              _getIcon(icon: MusicAppIcons.discover, active: true),
+              _getIcon(icon: MusicAppIcons.profile, active: false),
+            ],
+        ),
+      )]
     );
   }
 
@@ -43,7 +50,7 @@ class BottomToolbar extends StatelessWidget {
                 ),
               );
             } else {
-              return Container();
+              return Container(width: 20, height: 10,);
             }
           }())
         ],

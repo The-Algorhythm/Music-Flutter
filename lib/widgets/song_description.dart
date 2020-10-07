@@ -9,9 +9,11 @@ class SongDescription extends StatelessWidget {
 
   static const double textPadding = 5.0;
 
-  static const String imageUrl = "https://i.scdn.co/image/ab67616d00001e02323b486defbe382273719626";
-  static const String songName = "TV";
-  static const String albumArtist = "AUGUST - Lewis Del Mar";
+  final String albumArtUrl;
+  final String songName;
+  final String albumArtist;
+
+  SongDescription(this.albumArtUrl, this.songName, this.albumArtist);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class SongDescription extends StatelessWidget {
               children: [
                 CachedNetworkImage(
                   width: albumArtSize, height: albumArtSize,
-                  imageUrl: imageUrl,
+                  imageUrl: albumArtUrl,
                   errorWidget: (context, url, error) => new Icon(Icons.error),),
               Expanded(
                   child:

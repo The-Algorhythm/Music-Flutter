@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:music_app/home.dart';
+import 'package:music_app/discover.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,7 +12,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         textTheme: Theme.of(context).textTheme.apply(
           bodyColor: Colors.white,
-          displayColor: Colors.white
+          displayColor: Colors.white,
+          fontFamily: 'ProximaNova',
         ),
       ),
       home: Discover(),
