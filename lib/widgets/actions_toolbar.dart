@@ -16,15 +16,16 @@ class ActionsToolbar extends StatelessWidget {
           _getAction(icon: MusicAppIcons.heart),
           _getAction(icon: MusicAppIcons.spotify),
           _getAction(icon: MusicAppIcons.share),
-          _getAction(icon: MusicAppIcons.more),
+          _getAction(icon: Icons.more_horiz, size: 40.0),
+          Container(width: iconContainerSize, height: iconContainerSize,)
         ])
     );
   }
 
-  Widget _getAction({IconData icon}) {
+  Widget _getAction({IconData icon, double size=iconSize}) {
     return Container(
       width: iconContainerSize, height: iconContainerSize,
-      child: Icon(icon, size: iconSize, color: Colors.grey[300]),
+      child: Icon(icon, size: size, color: Colors.grey[300]),
     );
   }
 }

@@ -10,6 +10,7 @@ class _VideoContentState extends State<VideoContent> {
   VideoPlayerController _controller;
   MediaQueryData queryData;
   static const String videoUrl = "https://canvaz.scdn.co/upload/artist/2oqwwcM17wrP9hBD25zKSR/video/e78b962d504b4c5ba2177304d324d876.cnvs.mp4";
+//  static const String videoUrl = "https://canvaz.scdn.co/upload/artist/3kkoYvxvV00UXPJCqMCljL/video/e76b441968db401394ad4b1818a6d2be.cnvs.mp4";
 
   @override
   void initState() {
@@ -26,13 +27,32 @@ class _VideoContentState extends State<VideoContent> {
   @override
   Widget build(BuildContext context) {
     queryData = MediaQuery.of(context);
-    return Center(
-      child: _controller.value.initialized
-          ? AspectRatio(
-        aspectRatio: queryData.size.width / queryData.size.height,
-        child: VideoPlayer(_controller),
-      )
-          : Container(),
+    return Stack(
+      children: [
+        Center(
+          child: _controller.value.initialized
+              ? AspectRatio(
+            aspectRatio: queryData.size.width / queryData.size.height,
+            child: VideoPlayer(_controller),
+          )
+              : Container(),
+      ),
+        Container(
+          height: queryData.size.height,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              gradient: LinearGradient(
+                  begin: FractionalOffset.topCenter,
+                  end: FractionalOffset.bottomCenter,
+                  colors: [
+                    Colors.grey.withOpacity(0.0),
+                    Colors.black.withOpacity(0.6),
+                  ],
+                  stops: [
+                    0.0,
+                    1.0
+                  ])),
+        )],
     );
   }
 

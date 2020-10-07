@@ -7,7 +7,6 @@ class SongDescription extends StatelessWidget {
   static const double artistAlbumFontSize = 15.0;
   static const double albumArtSize = 100.0;
 
-  static const double albumArtPadding = 10.0;
   static const double textPadding = 5.0;
 
   static const String imageUrl = "https://i.scdn.co/image/ab67616d00001e02323b486defbe382273719626";
@@ -19,12 +18,9 @@ class SongDescription extends StatelessWidget {
     return Expanded(
         child:
         Padding(
-          padding: const EdgeInsets.only(left: albumArtPadding, bottom: albumArtPadding),
+          padding: const EdgeInsets.only(left: 10.0, bottom: 15.0),
           child: Row(
-//            mainAxisSize: MainAxisSize.max,
-//            crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-//              Container(height: albumArtSize, width: albumArtSize, color: Colors.pink[300]),
                 CachedNetworkImage(
                   width: albumArtSize, height: albumArtSize,
                   imageUrl: imageUrl,
