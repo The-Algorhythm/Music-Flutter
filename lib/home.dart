@@ -12,6 +12,8 @@ class Discover extends StatefulWidget {
 
 class _DiscoverState extends State<Discover> {
 
+  MediaQueryData queryData;
+
   Widget get middleSection => Expanded(
     child: Row(
         mainAxisSize: MainAxisSize.max,
@@ -20,17 +22,42 @@ class _DiscoverState extends State<Discover> {
     ),
   );
 
+  Widget _getGradient() {
+    return Container(
+      height: queryData.size.height,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          gradient: LinearGradient(
+              begin: FractionalOffset.topCenter,
+              end: FractionalOffset.bottomCenter,
+              colors: [
+                Colors.black.withOpacity(0.0),
+                Colors.black.withOpacity(0.6),
+              ],
+              stops: [
+                0.0,
+                1.0
+              ])),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    queryData = MediaQuery.of(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
           VideoContent(),
-          Column(
+          Stack(
             children: [
-              middleSection,
-              BottomToolbar(),
+              _getGradient(),
+              Column(
+                children: [
+                  middleSection,
+                  BottomToolbar(),
+                ],
+              ),
             ],
           ),
         ],

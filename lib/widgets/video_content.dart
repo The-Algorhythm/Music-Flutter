@@ -27,32 +27,13 @@ class _VideoContentState extends State<VideoContent> {
   @override
   Widget build(BuildContext context) {
     queryData = MediaQuery.of(context);
-    return Stack(
-      children: [
-        Center(
-          child: _controller.value.initialized
-              ? AspectRatio(
-            aspectRatio: queryData.size.width / queryData.size.height,
-            child: VideoPlayer(_controller),
-          )
-              : Container(),
-      ),
-        Container(
-          height: queryData.size.height,
-          decoration: BoxDecoration(
-              color: Colors.white,
-              gradient: LinearGradient(
-                  begin: FractionalOffset.topCenter,
-                  end: FractionalOffset.bottomCenter,
-                  colors: [
-                    Colors.grey.withOpacity(0.0),
-                    Colors.black.withOpacity(0.6),
-                  ],
-                  stops: [
-                    0.0,
-                    1.0
-                  ])),
-        )],
+    return Center(
+      child: _controller.value.initialized
+          ? AspectRatio(
+        aspectRatio: queryData.size.width / queryData.size.height,
+        child: VideoPlayer(_controller),
+      )
+          : Container(),
     );
   }
 
