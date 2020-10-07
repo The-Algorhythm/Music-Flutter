@@ -3,19 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:music_app/widgets/song_description.dart';
 import 'package:music_app/widgets/actions_toolbar.dart';
 import 'package:music_app/widgets/bottom_toolbar.dart';
+import 'package:music_app/widgets/video_content.dart';
 
-/// Empty page widget fo developers that want to follow along with the tutorial
-/// on breaking down and implementing the Tik Tok UI (BLOG_LINK)
-class Home extends StatelessWidget {
+class Discover extends StatefulWidget {
+  @override
+  _DiscoverState createState() => _DiscoverState();
+}
 
-  Widget get topSection => Container(
-    height: 100.0,
-    color: Colors.yellow[300],
-  );
+class _DiscoverState extends State<Discover> {
 
-
-
-      Widget get middleSection => Expanded(
+  Widget get middleSection => Expanded(
     child: Row(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -27,11 +24,15 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Column(
+      body: Stack(
         children: [
-          topSection,
-          middleSection,
-          BottomToolbar()
+          VideoContent(),
+          Column(
+            children: [
+              middleSection,
+              BottomToolbar(),
+            ],
+          ),
         ],
       )
     );
