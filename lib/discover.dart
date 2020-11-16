@@ -2,10 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/widgets/bottom_toolbar.dart';
 import 'package:music_app/widgets/discover_content.dart';
+import 'package:http/http.dart' as http;
 
 class Discover extends StatefulWidget {
   @override
   _DiscoverState createState() => _DiscoverState();
+}
+
+class GotoDiscover extends MaterialPageRoute<Null> {
+  GotoDiscover(): super(builder: (BuildContext context) {
+    return new Discover();
+  });
 }
 
 class _DiscoverState extends State<Discover> {
