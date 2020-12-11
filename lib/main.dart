@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:music_app/widgets/login.dart';
+import 'package:music_app/widgets/splash.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'ProximaNova',
         ),
       ),
-      home: LoginPage(),
+      home: SplashScreenPage(),
     );
   }
 }
