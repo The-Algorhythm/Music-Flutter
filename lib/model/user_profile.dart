@@ -103,7 +103,7 @@ class SpotifyProfile {
         isLoggedIn = false;
       }
     } catch (e) {
-      debugPrint('Caught error when loading from file: '+e);
+      debugPrint('Caught error when loading from file: '+e.toString());
       isLoggedIn = false;
     }
     return isLoggedIn;

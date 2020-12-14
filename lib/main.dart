@@ -9,6 +9,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'MusicApp',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         textTheme: Theme.of(context).textTheme.apply(
           bodyColor: Colors.white,

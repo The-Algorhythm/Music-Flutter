@@ -32,4 +32,5 @@ class MusicAppIcons {
   static const IconData reply = const IconData(0xe80d, fontFamily: _kFontFam);
   static const IconData search = const IconData(0xe80e, fontFamily: _kFontFam);
   static const IconData share = const IconData(0xe80f, fontFamily: _kFontFam);
+  static const IconData settings = const IconData(0xe811, fontFamily: _kFontFam);
 }

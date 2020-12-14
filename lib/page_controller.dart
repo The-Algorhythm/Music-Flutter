@@ -67,6 +67,7 @@ class _PagesHolderState extends State<PagesHolder> {
                       selectedFontSize: 14.0,
                       unselectedFontSize: 14.0,
                       elevation: 0,
+                      selectedItemColor: Color(0xFFc77dff),
                       items: [
                         BottomNavigationBarItem(
                             icon: Padding(
