@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/widgets/discover_content/song_canvas_content.dart';
+import 'package:music_app/widgets/discover_content/song_static_content.dart';
 
 class Discover extends StatefulWidget {
   @override
@@ -20,7 +21,7 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
     return PageView(
       scrollDirection: Axis.vertical,
       children: List.generate(5, (index) =>
-          SongCanvasContent(videoUrl, albumArtUrl, songName+index.toString(), albumArtist)
+          SongStaticContent(albumArtUrl, songName+index.toString(), albumArtist)
       ),
     );
   }
