@@ -16,6 +16,7 @@ class _SplashScreenState extends State<SplashScreenPage> {
     SpotifyProfile profile = SpotifyProfile();
     await profile.loginFromFile();
     if(profile.isLoggedIn) {
+      // TODO make request for fresh profile data
       return Future.value(PagesHolder());
     } else {
       return Future.value(LoginPage());

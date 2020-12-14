@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:music_app/model/user_profile.dart';
 import 'package:music_app/settings.dart';
 import 'package:music_app/app_icons.dart';
+import 'package:music_app/widgets/liked_songs_overlay.dart';
 
 class ProfilePage extends StatelessWidget {
 
   static MediaQueryData queryData;
   SpotifyProfile profile;
+  final Function overlayCallback;
+  final Function clearOverlayCallback;
 
   static const String albumArtUrl = "https://i.scdn.co/image/ab67616d00001e02323b486defbe382273719626";
+  List<String> imagedatamodel = List.generate(100, (index) {
+    return albumArtUrl;
+  });
+
+  ProfilePage(this.overlayCallback, this.clearOverlayCallback);
 
   Widget _topSection(ctx) {
     return Container(
@@ -74,23 +82,18 @@ class ProfilePage extends StatelessWidget {
     Navigator.push(ctx, settingsRoute());
   }
 
-  Widget _getChild() {
+  Widget _getChild(index) {
     return Container(
       width: 50,
       height: 50,
-      child: Stack(children: [
-        Image.network(albumArtUrl),
-        Container(
-            alignment: Alignment.bottomRight,
-            child: IconButton(icon: new Icon(MusicAppIcons.heart,
-            color: Colors.white,),
-            onPressed: () {_heartPressed();}))
-      ]),
+      child: GestureDetector(
+          onTap: (){_heartPressed(index);},
+          child:Image.network(albumArtUrl))
     );
   }
 
-  void _heartPressed() {
-
+  void _heartPressed(idx) {
+    overlayCallback(LikedSongsOverlay(idx, imagedatamodel, clearOverlayCallback));
   }
 
   @override
@@ -122,7 +125,7 @@ class ProfilePage extends StatelessWidget {
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                       children: List.generate(100, (index) {
-                        return _getChild();
+                        return _getChild(index);
                       }),
                     ),
                   ),
