@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:music_app/widgets/video_content.dart';
-import 'package:music_app/widgets/song_description.dart';
-import 'package:music_app/widgets/actions_toolbar.dart';
+import 'package:music_app/widgets/discover_content/video_content.dart';
+import 'package:music_app/widgets/discover_content/song_description.dart';
+import 'package:music_app/widgets/discover_content/actions_toolbar.dart';
 
-class DiscoverContent extends StatelessWidget {
+class SongCanvasContent extends StatelessWidget {
 
   static MediaQueryData queryData;
 
@@ -13,7 +13,7 @@ class DiscoverContent extends StatelessWidget {
   final String songName;
   final String albumArtist;
 
-  DiscoverContent(this.videoUrl, this.albumArtUrl, this.songName, this.albumArtist);
+  SongCanvasContent(this.videoUrl, this.albumArtUrl, this.songName, this.albumArtist);
 
   Widget get middleSection => Expanded(
     child: Row(

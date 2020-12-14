@@ -14,7 +14,6 @@ class VideoContent extends StatefulWidget {
 class _VideoContentState extends State<VideoContent> {
   VideoPlayerController _controller;
   MediaQueryData queryData;
-//  static const String videoUrl = "https://canvaz.scdn.co/upload/artist/3kkoYvxvV00UXPJCqMCljL/video/e76b441968db401394ad4b1818a6d2be.cnvs.mp4";
 
   @override
   void initState() {
