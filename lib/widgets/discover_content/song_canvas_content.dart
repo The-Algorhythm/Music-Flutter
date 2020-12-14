@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_app/widgets/discover_content/progress_indicator.dart';
 
 import 'package:music_app/widgets/discover_content/video_content.dart';
 import 'package:music_app/widgets/discover_content/song_description.dart';
@@ -54,7 +55,8 @@ class SongCanvasContent extends StatelessWidget {
         Column(
           children: [
             middleSection,
-            Container(height: 65.0,)
+            ContentProgressIndicator(),
+            Container(height: 67.0,)
           ],
         ),
       ],

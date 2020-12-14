@@ -17,10 +17,11 @@ class GoToMainScreen extends MaterialPageRoute<Null> {
   });
 }
 
-class _PagesHolderState extends State<PagesHolder> {
+class _PagesHolderState extends State<PagesHolder> with TickerProviderStateMixin {
 
   static MediaQueryData queryData;
   int _currentIdx = 0;
+  int _postProgress = 0;
   PageController _pageController = new PageController();
 
   Widget overlay = Container();

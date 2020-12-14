@@ -21,6 +21,7 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
     return PageView(
       scrollDirection: Axis.vertical,
       children: List.generate(5, (index) =>
+//          SongCanvasContent(videoUrl, albumArtUrl, songName+index.toString(), albumArtist)
           SongStaticContent(albumArtUrl, songName+index.toString(), albumArtist)
       ),
     );

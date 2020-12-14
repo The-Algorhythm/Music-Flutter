@@ -1,8 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-
-import 'package:music_app/widgets/discover_content/song_description.dart';
 import 'package:music_app/widgets/discover_content/actions_toolbar.dart';
+import 'package:music_app/widgets/discover_content/progress_indicator.dart';
 
 class SongStaticContent extends StatelessWidget {
 
@@ -49,8 +48,8 @@ class SongStaticContent extends StatelessWidget {
         ClipRect(  // <-- clips to the 200x200 [Container] below
           child: BackdropFilter(
             filter: ImageFilter.blur(
-              sigmaX: 5.0,
-              sigmaY: 5.0,
+              sigmaX: 10.0,
+              sigmaY: 10.0,
             ),
             child: Container(
               width: queryData.size.width,
@@ -58,8 +57,7 @@ class SongStaticContent extends StatelessWidget {
               child: Container(color: Colors.black.withOpacity(0),)
             ),
           ),
-        ),
-        _getGradient()
+        )
       ],
     );
   }
@@ -92,13 +90,15 @@ class SongStaticContent extends StatelessWidget {
     return Stack(
       children: [
         _getBlur(),
+        _getGradient(),
         _getMainSection(context),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             ActionsToolbar(),
-            Container(height: 65.0,),
+            ContentProgressIndicator(),
+            Container(height: 67.0,),
           ],
         ),
       ],
