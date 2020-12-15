@@ -3,15 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:music_app/widgets/discover_content/actions_toolbar.dart';
 import 'package:music_app/widgets/discover_content/progress_indicator.dart';
 
-class SongStaticContent extends StatelessWidget {
-
-  static MediaQueryData queryData;
-
+class SongStaticContent extends StatefulWidget {
   final String albumArtUrl;
   final String songName;
   final String albumArtist;
+  final double playerRatio;
+  final double lastPlayerRatio;
+  final Function togglePause;
+  final bool paused;
 
-  SongStaticContent(this.albumArtUrl, this.songName, this.albumArtist);
+  SongStaticContent(this.albumArtUrl, this.songName, this.albumArtist,
+      this.lastPlayerRatio, this.playerRatio, this.togglePause, this.paused);
+
+  @override
+  _SongStaticContentState createState() => _SongStaticContentState();
+}
+
+class _SongStaticContentState extends State<SongStaticContent> {
+
+  static MediaQueryData queryData;
 
   Widget _getGradient() {
     return Container(
@@ -42,10 +52,10 @@ class SongStaticContent extends StatelessWidget {
             child: new Container(
                 width: 2*queryData.size.width,
                 height: queryData.size.height-queryData.viewPadding.top,
-                child: Image.network(albumArtUrl, scale: 0.1,),
+                child: Image.network(widget.albumArtUrl, scale: 0.1,),
             )
         ),
-        ClipRect(  // <-- clips to the 200x200 [Container] below
+        ClipRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(
               sigmaX: 10.0,
@@ -72,15 +82,29 @@ class SongStaticContent extends StatelessWidget {
           child: Center(
             child: Container(
                 width: queryData.size.width*0.75,
-                child: Image.network(albumArtUrl)),
+                child: Image.network(widget.albumArtUrl)),
           ),
         ),
-        Text(songName, style: TextStyle(fontSize: 20),),
-        Text(albumArtist, style: TextStyle(fontSize: 18),),
+        Text(widget.songName, style: TextStyle(fontSize: 20),),
+        Text(widget.albumArtist, style: TextStyle(fontSize: 18),),
         Container(
           height: 67,
         )
       ],
+    );
+  }
+
+  Widget _getPauseOverlay(context) {
+    MediaQueryData queryData = MediaQuery.of(context);
+    return widget.paused ? Container(
+        width: queryData.size.width,
+        height: queryData.size.height - queryData.viewPadding.top,
+        color: Colors.black.withOpacity(0.4),
+        child: Icon(Icons.play_arrow, size: 200, color: Colors.white.withOpacity(0.7))
+    ) : Container(
+      width: queryData.size.width,
+      height: queryData.size.height - queryData.viewPadding.top,
+      color: Colors.black.withOpacity(0.0),
     );
   }
 
@@ -92,12 +116,15 @@ class SongStaticContent extends StatelessWidget {
         _getBlur(),
         _getGradient(),
         _getMainSection(context),
+        GestureDetector(
+            onTap: () => widget.togglePause(),
+            child: _getPauseOverlay(context)),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             ActionsToolbar(),
-            ContentProgressIndicator(),
+            ContentProgressIndicator(widget.lastPlayerRatio, widget.playerRatio),
             Container(height: 67.0,),
           ],
         ),

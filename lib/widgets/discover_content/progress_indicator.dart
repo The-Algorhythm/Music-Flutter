@@ -1,6 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class ContentProgressIndicator extends StatefulWidget {
+  double playerRatio;
+  double lastPlayerRatio;
+  ContentProgressIndicator(this.lastPlayerRatio, this.playerRatio);
   @override
   _ContentProgressIndicatorState createState() => _ContentProgressIndicatorState();
 }
@@ -12,28 +17,28 @@ class _ContentProgressIndicatorState extends State<ContentProgressIndicator> wit
 
   @override
   void initState() {
+    _initAnimation();
+    super.initState();
+  }
+
+  void _initAnimation() {
     _durationController = new AnimationController(
       vsync: this,
       duration: new Duration(
-        milliseconds: 30*1000,
-      ),
+        milliseconds: 170,
+      )
     );
-    _durationController.addStatusListener((animationStatus) {
-      switch (animationStatus) {
-        case AnimationStatus.completed:
-          _durationController.value = 0;
-          _durationController.forward();
-          break;
-        case AnimationStatus.dismissed:
-          break;
-        case AnimationStatus.forward:
-          break;
-        case AnimationStatus.reverse:
-          break;
-      }
-    });
     _durationController.forward();
-    super.initState();
+  }
+
+  double indentValue(animationValue, begin, end) {
+    double distance = end-begin;
+    double result = begin + distance.abs()*animationValue;
+    if(result == null || result < 0) {
+      return 0;
+    } else {
+      return result;
+    }
   }
 
   AnimatedBuilder _getProgressIndicator(context) {
@@ -43,7 +48,10 @@ class _ContentProgressIndicatorState extends State<ContentProgressIndicator> wit
         builder: (context, child) {
           return Divider(
               height: 0,
-              endIndent: queryData.size.width - _durationController.value*queryData.size.width,
+              endIndent: queryData.size.width - min(queryData.size.width,
+                      indentValue(_durationController.value,
+                          queryData.size.width*widget.lastPlayerRatio,
+                          queryData.size.width*widget.playerRatio)),
               color: Color(0xFFc77dff),
               thickness: 1.5);
         });
@@ -51,6 +59,13 @@ class _ContentProgressIndicatorState extends State<ContentProgressIndicator> wit
 
   @override
   Widget build(BuildContext context) {
+    if(widget.playerRatio == null) {
+      widget.playerRatio = 0;
+    }
+    if(widget.lastPlayerRatio == null) {
+      widget.lastPlayerRatio = 0;
+    }
+    _initAnimation();
     return _getProgressIndicator(context);
   }
 

@@ -13,8 +13,10 @@ class SongCanvasContent extends StatelessWidget {
   final String albumArtUrl;
   final String songName;
   final String albumArtist;
+  final double playerRatio;
+  final double lastPlayerRatio;
 
-  SongCanvasContent(this.videoUrl, this.albumArtUrl, this.songName, this.albumArtist);
+  SongCanvasContent(this.videoUrl, this.albumArtUrl, this.songName, this.albumArtist, this.lastPlayerRatio, this.playerRatio);
 
   Widget get middleSection => Expanded(
     child: Row(
@@ -55,7 +57,7 @@ class SongCanvasContent extends StatelessWidget {
         Column(
           children: [
             middleSection,
-            ContentProgressIndicator(),
+            ContentProgressIndicator(this.lastPlayerRatio, this.playerRatio),
             Container(height: 67.0,)
           ],
         ),

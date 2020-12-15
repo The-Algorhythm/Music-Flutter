@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:music_app/app_icons.dart';
 import 'package:music_app/discover.dart';
 import 'package:music_app/profile.dart';
-import 'package:music_app/widgets/liked_songs_overlay.dart';
 
 
 class PagesHolder extends StatefulWidget {
@@ -17,22 +16,24 @@ class GoToMainScreen extends MaterialPageRoute<Null> {
   });
 }
 
-class _PagesHolderState extends State<PagesHolder> with TickerProviderStateMixin {
+enum PageStatus { inactive, returning, active }
+
+class _PagesHolderState extends State<PagesHolder> {
 
   static MediaQueryData queryData;
   int _currentIdx = 0;
-  int _postProgress = 0;
   PageController _pageController = new PageController();
+  PageStatus _discoverStatus = PageStatus.active;
 
   Widget overlay = Container();
 
-  void setLikedSongsOverlay(Widget overlayWidget) {
+  void setOverlay(Widget overlayWidget) {
     setState(() {
       overlay = overlayWidget;
     });
   }
 
-  void clearLikedSongsOverlay() {
+  void clearOverlay() {
     setState(() {
       overlay = Container();
     });
@@ -44,12 +45,26 @@ class _PagesHolderState extends State<PagesHolder> with TickerProviderStateMixin
   void _onPageChanged(int idx) {
     setState(() {
       _currentIdx = idx;
+      // Update Discover page status
+      if(idx == 0) {
+        // We are coming to the Discover page
+        _discoverStatus = PageStatus.returning;
+      } else {
+        _discoverStatus = PageStatus.inactive;
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    _screens = [Discover(), ProfilePage(setLikedSongsOverlay, clearLikedSongsOverlay)];
+    print("discoverStatus: "+_discoverStatus.toString());
+    _screens = [Discover(_discoverStatus), ProfilePage(setOverlay, clearOverlay)];
+    if(_discoverStatus == PageStatus.returning) {
+      // if we are returning, change to active so we are only returning once
+      setState(() {
+        _discoverStatus = PageStatus.active;
+      });
+    }
     queryData = MediaQuery.of(context);
     return Scaffold(
       backgroundColor: Colors.black,
