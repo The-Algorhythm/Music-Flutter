@@ -57,7 +57,6 @@ class _PagesHolderState extends State<PagesHolder> {
 
   @override
   Widget build(BuildContext context) {
-    print("discoverStatus: "+_discoverStatus.toString());
     _screens = [Discover(_discoverStatus), ProfilePage(setOverlay, clearOverlay)];
     if(_discoverStatus == PageStatus.returning) {
       // if we are returning, change to active so we are only returning once

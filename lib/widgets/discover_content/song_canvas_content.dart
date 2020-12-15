@@ -15,8 +15,12 @@ class SongCanvasContent extends StatelessWidget {
   final String albumArtist;
   final double playerRatio;
   final double lastPlayerRatio;
+  final Function togglePause;
+  final bool paused;
 
-  SongCanvasContent(this.videoUrl, this.albumArtUrl, this.songName, this.albumArtist, this.lastPlayerRatio, this.playerRatio);
+  SongCanvasContent(this.videoUrl, this.albumArtUrl, this.songName,
+      this.albumArtist, this.lastPlayerRatio, this.playerRatio,
+      this.togglePause, this.paused);
 
   Widget get middleSection => Expanded(
     child: Row(
@@ -47,13 +51,30 @@ class SongCanvasContent extends StatelessWidget {
     );
   }
 
+  Widget _getPauseOverlay(context) {
+    MediaQueryData queryData = MediaQuery.of(context);
+    return this.paused ? Container(
+        width: queryData.size.width,
+        height: queryData.size.height - queryData.viewPadding.top,
+        color: Colors.black.withOpacity(0.4),
+        child: Icon(Icons.play_arrow, size: 200, color: Colors.white.withOpacity(0.7))
+    ) : Container(
+      width: queryData.size.width,
+      height: queryData.size.height - queryData.viewPadding.top,
+      color: Colors.black.withOpacity(0.0),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     queryData = MediaQuery.of(context);
     return Stack(
       children: [
-        VideoContent(videoUrl),
+        VideoContent(videoUrl, paused),
         _getGradient(),
+        GestureDetector(
+            onTap: () => this.togglePause(),
+            child: _getPauseOverlay(context)),
         Column(
           children: [
             middleSection,

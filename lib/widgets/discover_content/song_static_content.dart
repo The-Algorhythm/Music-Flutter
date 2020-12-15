@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:music_app/widgets/discover_content/actions_toolbar.dart';
 import 'package:music_app/widgets/discover_content/progress_indicator.dart';
 
-class SongStaticContent extends StatefulWidget {
+class SongStaticContent extends StatelessWidget {
+
   final String albumArtUrl;
   final String songName;
   final String albumArtist;
@@ -14,13 +15,6 @@ class SongStaticContent extends StatefulWidget {
 
   SongStaticContent(this.albumArtUrl, this.songName, this.albumArtist,
       this.lastPlayerRatio, this.playerRatio, this.togglePause, this.paused);
-
-  @override
-  _SongStaticContentState createState() => _SongStaticContentState();
-}
-
-class _SongStaticContentState extends State<SongStaticContent> {
-
   static MediaQueryData queryData;
 
   Widget _getGradient() {
@@ -52,7 +46,7 @@ class _SongStaticContentState extends State<SongStaticContent> {
             child: new Container(
                 width: 2*queryData.size.width,
                 height: queryData.size.height-queryData.viewPadding.top,
-                child: Image.network(widget.albumArtUrl, scale: 0.1,),
+                child: Image.network(this.albumArtUrl, scale: 0.1,),
             )
         ),
         ClipRect(
@@ -82,11 +76,11 @@ class _SongStaticContentState extends State<SongStaticContent> {
           child: Center(
             child: Container(
                 width: queryData.size.width*0.75,
-                child: Image.network(widget.albumArtUrl)),
+                child: Image.network(this.albumArtUrl)),
           ),
         ),
-        Text(widget.songName, style: TextStyle(fontSize: 20),),
-        Text(widget.albumArtist, style: TextStyle(fontSize: 18),),
+        Text(this.songName, style: TextStyle(fontSize: 20),),
+        Text(this.albumArtist, style: TextStyle(fontSize: 18),),
         Container(
           height: 67,
         )
@@ -96,7 +90,7 @@ class _SongStaticContentState extends State<SongStaticContent> {
 
   Widget _getPauseOverlay(context) {
     MediaQueryData queryData = MediaQuery.of(context);
-    return widget.paused ? Container(
+    return this.paused ? Container(
         width: queryData.size.width,
         height: queryData.size.height - queryData.viewPadding.top,
         color: Colors.black.withOpacity(0.4),
@@ -117,14 +111,14 @@ class _SongStaticContentState extends State<SongStaticContent> {
         _getGradient(),
         _getMainSection(context),
         GestureDetector(
-            onTap: () => widget.togglePause(),
+            onTap: () => this.togglePause(),
             child: _getPauseOverlay(context)),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             ActionsToolbar(),
-            ContentProgressIndicator(widget.lastPlayerRatio, widget.playerRatio),
+            ContentProgressIndicator(this.lastPlayerRatio, this.playerRatio),
             Container(height: 67.0,),
           ],
         ),

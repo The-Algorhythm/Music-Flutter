@@ -44,7 +44,6 @@ class MusicPlayer {
             if(playerState != PlayerState.stopped) {
               initAudioPlayer();
             } else {
-              print("stopped");
               audioPositionChangedCallback(position);
             }
           }
@@ -55,7 +54,6 @@ class MusicPlayer {
   }
 
   Future play(url) async {
-    print("playing audio");
     currentUrl = url;
     await audioPlayer.play(url);
     playerState = PlayerState.playing;

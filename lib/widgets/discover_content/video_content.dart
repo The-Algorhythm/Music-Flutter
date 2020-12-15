@@ -4,8 +4,9 @@ import 'package:video_player/video_player.dart';
 class VideoContent extends StatefulWidget {
 
   final String url;
+  final bool paused;
 
-  VideoContent(this.url);
+  VideoContent(this.url, this.paused);
 
   @override
   _VideoContentState createState() => _VideoContentState();
@@ -14,6 +15,7 @@ class VideoContent extends StatefulWidget {
 class _VideoContentState extends State<VideoContent> {
   VideoPlayerController _controller;
   MediaQueryData queryData;
+  bool _wasPaused = false;
 
   @override
   void initState() {
@@ -30,6 +32,13 @@ class _VideoContentState extends State<VideoContent> {
   @override
   Widget build(BuildContext context) {
     queryData = MediaQuery.of(context);
+    if(widget.paused && !_wasPaused) {
+      _controller.pause();
+      _wasPaused = true;
+    } else if(!widget.paused && _wasPaused) {
+      _controller.play();
+      _wasPaused = false;
+    }
     return Center(
       child: _controller.value.initialized
           ? AspectRatio(

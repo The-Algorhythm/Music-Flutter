@@ -56,7 +56,6 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
   void _onPageChanged(int idx) async {
     await _musicPlayer.stop();
     await _musicPlayer.play(previewUrl);
-    print("total duration: "+_musicPlayer.duration.inMilliseconds.toString());
   }
 
   void setOverlay(Widget overlayWidget) {
@@ -75,7 +74,6 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
     setState(() {
       _paused = !_paused;
     });
-    print("Paused: "+_paused.toString());
     if(_paused) {
       _musicPlayer.pause();
     } else {
@@ -97,8 +95,10 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
       scrollDirection: Axis.vertical,
       onPageChanged: _onPageChanged,
       children: List.generate(5, (index) =>
-//          SongCanvasContent(videoUrl, albumArtUrl, songName+index.toString(), albumArtist)
-      SongStaticContent(albumArtUrl, songName+index.toString(), albumArtist, _lastPlayerRatio, _playerRatio, _togglePause, _paused))
+          SongCanvasContent(videoUrl, albumArtUrl, songName+index.toString(),
+              albumArtist, _lastPlayerRatio, _playerRatio, _togglePause, _paused))
+//      SongStaticContent(albumArtUrl, songName+index.toString(), albumArtist,
+//          _lastPlayerRatio, _playerRatio, _togglePause, _paused))
     );
   }
 
