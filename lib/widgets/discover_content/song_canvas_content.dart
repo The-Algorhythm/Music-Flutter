@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/widgets/discover_content/progress_indicator.dart';
 
@@ -72,12 +73,22 @@ class SongCanvasContent extends StatelessWidget {
       children: [
         VideoContent(videoUrl, paused),
         _getGradient(),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              SongDescription(this.albumArtUrl, this.songName, this.albumArtist),
+              Container(height: 67,)
+            ]),
         GestureDetector(
             onTap: () => this.togglePause(true),
             child: _getPauseOverlay(context)),
         Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            middleSection,
+            Container(
+              alignment: Alignment.bottomRight,
+                child: ActionsToolbar()
+            ),
             ContentProgressIndicator(this.lastPlayerRatio, this.playerRatio),
             Container(height: 67.0,)
           ],

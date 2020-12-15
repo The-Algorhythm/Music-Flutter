@@ -17,30 +17,28 @@ class SongDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child:
-        Padding(
-          padding: const EdgeInsets.only(left: 10.0, bottom: 15.0),
-          child: Row(
-              children: [
-                CachedNetworkImage(
-                  width: albumArtSize, height: albumArtSize,
-                  imageUrl: albumArtUrl,
-                  errorWidget: (context, url, error) => new Icon(Icons.error),),
-              Expanded(
-                  child:
-                  Padding(
-                    padding: const EdgeInsets.only(left: textPadding),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(songName, style: TextStyle(fontSize: songNameFontSize),),
-                        Text(albumArtist, style: TextStyle(fontSize: artistAlbumFontSize),)
-                    ]),
-                  )
-          )]
+    return Padding(
+      padding: const EdgeInsets.only(left: 10.0, bottom: 15.0),
+      child: Row(
+          children: [
+            CachedNetworkImage(
+              width: albumArtSize, height: albumArtSize,
+              imageUrl: albumArtUrl,
+              errorWidget: (context, url, error) => new Icon(Icons.error),),
+          Expanded(
+              child:
+              Padding(
+                padding: const EdgeInsets.only(left: textPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(songName, style: TextStyle(fontSize: songNameFontSize),),
+                    Text(albumArtist, style: TextStyle(fontSize: artistAlbumFontSize),)
+                ]),
+              )
+      )]
     ),
-        ));
+    );
   }
 }
