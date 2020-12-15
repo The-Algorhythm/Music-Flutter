@@ -55,6 +55,9 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
 
 
   void _onPageChanged(int idx) async {
+    setState(() {
+      _paused = false;
+    });
     await _musicPlayer.stop();
     await _musicPlayer.play(previewUrl);
   }
