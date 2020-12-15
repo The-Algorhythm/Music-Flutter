@@ -111,7 +111,7 @@ class SongStaticContent extends StatelessWidget {
         _getGradient(),
         _getMainSection(context),
         GestureDetector(
-            onTap: () => this.togglePause(),
+            onTap: () => this.togglePause(true),
             child: _getPauseOverlay(context)),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,

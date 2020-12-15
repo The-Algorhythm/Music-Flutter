@@ -73,7 +73,7 @@ class SongCanvasContent extends StatelessWidget {
         VideoContent(videoUrl, paused),
         _getGradient(),
         GestureDetector(
-            onTap: () => this.togglePause(),
+            onTap: () => this.togglePause(true),
             child: _getPauseOverlay(context)),
         Column(
           children: [

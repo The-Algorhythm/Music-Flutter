@@ -30,6 +30,7 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
   double _playerRatio;
   double _lastPlayerRatio;
   bool _paused = false;
+  bool _userPaused = false;
   Duration _lastUpdate = Duration(seconds: 0);
   Widget overlay = Container();
 
@@ -70,9 +71,12 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
     });
   }
 
-  void _togglePause() {
+  void _togglePause(bool pausedByUser) {
     setState(() {
       _paused = !_paused;
+      if(pausedByUser) {
+        _userPaused = _paused;
+      }
     });
     if(_paused) {
       _musicPlayer.pause();
@@ -85,11 +89,11 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    if(_paused && widget.discoverStatus == PageStatus.returning) {
-      _togglePause();
+    if(_paused && !_userPaused && widget.discoverStatus == PageStatus.returning) {
+      _togglePause(false);
       widget.discoverStatus = PageStatus.active;
     } else if(!_paused && widget.discoverStatus == PageStatus.inactive) {
-      _togglePause();
+      _togglePause(false);
     }
     return PageView(
       scrollDirection: Axis.vertical,
