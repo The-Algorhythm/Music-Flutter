@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:music_app/app_icons.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:music_app/model/song.dart';
 import 'package:music_app/model/user_profile.dart';
 import 'package:music_app/page_controller.dart';
 import 'dart:convert';
+
+import '../middleware.dart';
 
 class GoToLogin extends MaterialPageRoute<Null> {
   GoToLogin(): super(builder: (BuildContext context) {
@@ -58,12 +61,15 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  _login(ctx, tokenInfo, userInfo) {
+  _login(ctx, tokenInfo, userInfo) async {
     SpotifyProfile profile = SpotifyProfile();
     profile.login(tokenInfo, userInfo['display_name'], userInfo['email'],
         userInfo['id'], userInfo['images'][0]['url'], userInfo['uri'],
         userInfo['product'], userInfo['country']);
-    Navigator.pushReplacement(ctx, GoToMainScreen());
+    List<Song> songs = await getRecommendations(numSongs: 10);
+    Navigator.pushReplacement(
+      ctx, MaterialPageRoute(builder: (ctx) => PagesHolder(songs)),
+    );
   }
 
   _launchURL(ctx) async {

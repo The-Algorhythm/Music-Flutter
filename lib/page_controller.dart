@@ -6,14 +6,12 @@ import 'package:music_app/profile.dart';
 
 
 class PagesHolder extends StatefulWidget {
+  final initialSongs;
+
+  PagesHolder(this.initialSongs);
+
   @override
   _PagesHolderState createState() => _PagesHolderState();
-}
-
-class GoToMainScreen extends MaterialPageRoute<Null> {
-  GoToMainScreen(): super(builder: (BuildContext context) {
-    return new PagesHolder();
-  });
 }
 
 enum PageStatus { inactive, returning, active }
@@ -57,7 +55,7 @@ class _PagesHolderState extends State<PagesHolder> {
 
   @override
   Widget build(BuildContext context) {
-    _screens = [Discover(_discoverStatus), ProfilePage(setOverlay, clearOverlay)];
+    _screens = [Discover(widget.initialSongs, _discoverStatus), ProfilePage(setOverlay, clearOverlay)];
     if(_discoverStatus == PageStatus.returning) {
       // if we are returning, change to active so we are only returning once
       setState(() {

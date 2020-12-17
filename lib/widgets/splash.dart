@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:music_app/middleware.dart';
+import 'package:music_app/model/song.dart';
 import 'package:music_app/page_controller.dart';
 import 'package:music_app/widgets/login.dart';
 import 'package:splashscreen/splashscreen.dart';
@@ -17,7 +19,8 @@ class _SplashScreenState extends State<SplashScreenPage> {
     await profile.loginFromFile();
     if(profile.isLoggedIn) {
       // TODO make request for fresh profile data
-      return Future.value(PagesHolder());
+      List<Song> songs = await getRecommendations(numSongs: 10);
+      return Future.value(PagesHolder(songs));
     } else {
       return Future.value(LoginPage());
     }

@@ -7,10 +7,13 @@ import 'package:music_app/widgets/discover_content/song_canvas_content.dart';
 import 'package:music_app/widgets/discover_content/song_static_content.dart';
 import 'package:music_app/page_controller.dart';
 
+import 'model/song.dart';
+
 class Discover extends StatefulWidget {
   PageStatus discoverStatus;
+  final List<Song> initialSongs;
 
-  Discover(this.discoverStatus);
+  Discover(this.initialSongs, this.discoverStatus);
 
   @override
   _DiscoverState createState() => _DiscoverState();
@@ -20,12 +23,6 @@ enum PlayerState { stopped, playing, paused }
 
 class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
 
-  static const String videoUrl = "https://canvaz.scdn.co/upload/artist/2oqwwcM17wrP9hBD25zKSR/video/e78b962d504b4c5ba2177304d324d876.cnvs.mp4";
-  static const String albumArtUrl = "https://i.scdn.co/image/ab67616d00001e02323b486defbe382273719626";
-  static const String songName = "TV";
-  static const String albumArtist = "AUGUST - Lewis Del Mar";
-  static const String previewUrl = "https://p.scdn.co/mp3-preview/d5cb79333f29ec36a9a163dfc65a62ca142bb5e2?cid=a46f5c5745a14fbf826186da8da5ecc3";
-
   MusicPlayer _musicPlayer;
   double _playerRatio;
   double _lastPlayerRatio;
@@ -33,11 +30,16 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
   bool _userPaused = false;
   Duration _lastUpdate = Duration(seconds: 0);
   Widget overlay = Container();
+  List<Song> _songs;
+  int _currentIdx;
 
   @override
   void initState() {
     super.initState();
-    _musicPlayer = MusicPlayer(previewUrl, _onAudioPositionChanged);
+    setState(() {
+      _songs = widget.initialSongs;
+    });
+    _musicPlayer = MusicPlayer(_songs[0].previewUrl, _onAudioPositionChanged);
     _musicPlayer.initAudioPlayer();
   }
 
@@ -57,9 +59,12 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
   void _onPageChanged(int idx) async {
     setState(() {
       _paused = false;
+      _currentIdx = idx;
+      print("Setting current index to: $_currentIdx");
     });
     await _musicPlayer.stop();
-    await _musicPlayer.play(previewUrl);
+    await _musicPlayer.play(_songs[_currentIdx].previewUrl);
+    print("Playing song with index: $_currentIdx");
   }
 
   void setOverlay(Widget overlayWidget) {
@@ -89,6 +94,20 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
     }
   }
 
+  List<Widget> _getSongContentPages() {
+    return List.generate(_songs.length,(i){
+      Song song = _songs[i];
+      String albumArtist = song.album + " - " + song.artist;
+      if(song.canvasUrl != null) {
+        return SongCanvasContent(song.canvasUrl, song.albumArtUrl, song.title,
+            albumArtist, _lastPlayerRatio, _playerRatio, _togglePause, _paused);
+      } else {
+        return SongStaticContent(song.albumArtUrl, song.title, albumArtist,
+            _lastPlayerRatio, _playerRatio, _togglePause, _paused);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -101,11 +120,7 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
     return PageView(
       scrollDirection: Axis.vertical,
       onPageChanged: _onPageChanged,
-      children: List.generate(5, (index) =>
-          SongCanvasContent(videoUrl, albumArtUrl, songName+index.toString(),
-              albumArtist, _lastPlayerRatio, _playerRatio, _togglePause, _paused))
-//      SongStaticContent(albumArtUrl, songName+index.toString(), albumArtist,
-//          _lastPlayerRatio, _playerRatio, _togglePause, _paused))
+      children: _getSongContentPages()
     );
   }
 
