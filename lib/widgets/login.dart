@@ -14,9 +14,67 @@ class GoToLogin extends MaterialPageRoute<Null> {
   });
 }
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => new _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
 
   final flutterWebViewPlugin = FlutterWebviewPlugin();
+  bool _isLoading = false;
+
+  Widget _getLoader() {
+    if(_isLoading) {
+      return Column(
+        children: [
+          Container(height: 100,),
+          SizedBox(
+            height: 40,
+            width: 40,
+            child: CircularProgressIndicator(
+              strokeWidth: 5,
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFC77DFF)),
+            )),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text("Gathering recommendations...",
+              style: TextStyle(fontSize: 20, color: Color(0xFFC77DFF)),),
+          )]);
+    } else {
+      return Container();
+    }
+  }
+
+  Widget _getLoginButton(ctx) {
+    if(_isLoading) {
+      return Container();
+    } else {
+      return Container(
+        padding: EdgeInsets.all(25.00),
+        child: RaisedButton(
+          color: Colors.green,
+          onPressed: (){
+            _launchURL(ctx);
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 7),
+                  child: Text("Login with Spotify",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                ),
+                Icon(MusicAppIcons.spotify, color: Colors.white)],
+            ),
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext ctx) {
@@ -33,29 +91,8 @@ class LoginPage extends StatelessWidget {
                   style: new TextStyle(color: Colors.white, fontSize: 50, fontWeight: FontWeight.bold),
                 ),
               ),
-              Container(
-                padding: EdgeInsets.all(25.00),
-                child: RaisedButton(
-                  color: Colors.green,
-                  onPressed: (){
-                    _launchURL(ctx);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 7),
-                          child: Text("Login with Spotify",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-                        ),
-                        Icon(MusicAppIcons.spotify, color: Colors.white)],
-                    ),
-                  ),
-                  ),
-                )],
+            _getLoginButton(ctx),
+            _getLoader()],
           ),
       ),
     );
@@ -85,6 +122,10 @@ class LoginPage extends StatelessWidget {
     String js = "window.document.body.innerText";
     String val =  await flutterWebViewPlugin.evalJavascript(js);
     if(val.contains("current_user") && val.contains("token_info")) {
+      setState(() {
+        _isLoading = true;
+      });
+
       flutterWebViewPlugin.cleanCookies();
       flutterWebViewPlugin.close();
       Map<String, dynamic> data = jsonDecode(jsonDecode(val));
