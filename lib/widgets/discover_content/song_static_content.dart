@@ -53,7 +53,7 @@ class SongStaticContent extends StatelessWidget {
               ],
               stops: [
                 0.0,
-                0.3,
+                0.7,
                 1.0
               ])),
     );

@@ -100,7 +100,7 @@ class _PagesHolderState extends State<PagesHolder> {
                         children: [
                         Divider(
                             height: 0,
-                            color: Colors.white,
+                            color: Colors.white.withOpacity(0.4),
                             thickness: 0.5),
                         WidgetSize(
                           onChange: (Size size) {
