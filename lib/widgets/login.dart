@@ -8,12 +8,6 @@ import 'dart:convert';
 
 import '../middleware.dart';
 
-class GoToLogin extends MaterialPageRoute<Null> {
-  GoToLogin(): super(builder: (BuildContext context) {
-    return new LoginPage();
-  });
-}
-
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => new _LoginPageState();
@@ -21,6 +15,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
+  final loginUrl = 'http://musicbackend-dev.us-east-1.elasticbeanstalk.com/login/';
   final flutterWebViewPlugin = FlutterWebviewPlugin();
   bool _isLoading = false;
 
@@ -110,30 +105,37 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _launchURL(ctx) async {
-    const url = 'http://musicbackend-dev.us-east-1.elasticbeanstalk.com/login/';
     flutterWebViewPlugin.onUrlChanged.listen((String url) {
       debugPrint('url: '+url);
-      _getPageContent(ctx);
+      _getPageContent(ctx, url);
     });
-    flutterWebViewPlugin.launch(url);
+    flutterWebViewPlugin.launch(loginUrl);
   }
 
-  _getPageContent(ctx) async {
+  _getPageContent(ctx, url) async {
     String js = "window.document.body.innerText";
-    String val =  await flutterWebViewPlugin.evalJavascript(js);
-    Uri a = Uri.parse("");
-    if(val.contains("current_user") && val.contains("token_info")) {
-      setState(() {
-        _isLoading = true;
-      });
+    Uri uri = Uri.parse(url);
+    if(uri.queryParameters['code'] != null) {
+      await new Future.delayed(const Duration(seconds: 1));
+      String val = await flutterWebViewPlugin.evalJavascript(js);
+      if (val != null && val.contains("current_user") && val.contains("token_info")) {
+        print('yep');
+        if(this.mounted) {
+          setState(() {
+            _isLoading = true;
+          });
+        }
 
-      await flutterWebViewPlugin.cleanCookies();
-      flutterWebViewPlugin.close();
-      dynamic data = jsonDecode(val);
-      while(data is! Map<String, dynamic>) {
-        data = jsonDecode(jsonDecode(val));
+        await flutterWebViewPlugin.cleanCookies();
+        flutterWebViewPlugin.close();
+        dynamic data = jsonDecode(val);
+        while (data is! Map<String, dynamic>) {
+          data = jsonDecode(jsonDecode(val));
+        }
+        _login(ctx, data['token_info'], data['current_user']);
+      } else {
       }
-      _login(ctx, data['token_info'], data['current_user']);
     }
-  }
+    }
+
 }

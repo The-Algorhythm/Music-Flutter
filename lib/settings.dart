@@ -58,6 +58,8 @@ class SettingsPage extends StatelessWidget {
   _logout(ctx) {
     SpotifyProfile profile = SpotifyProfile();
     profile.logout();
-    Navigator.pushReplacement(ctx, GoToLogin());
+    Navigator.of(ctx).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (ctx) => LoginPage()),
+            (Route<dynamic> route) => false);
   }
 }
