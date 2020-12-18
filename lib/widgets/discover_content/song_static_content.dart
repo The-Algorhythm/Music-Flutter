@@ -19,7 +19,7 @@ class SongStaticContent extends StatelessWidget {
       this.navBarSize);
   static MediaQueryData queryData;
 
-  Widget _getGradient() {
+  Widget _getVerticalGradient() {
     return Container(
       height: queryData.size.height,
       decoration: BoxDecoration(
@@ -33,6 +33,27 @@ class SongStaticContent extends StatelessWidget {
               ],
               stops: [
                 0.0,
+                1.0
+              ])),
+    );
+  }
+
+  Widget _getHorizontalGradient() {
+    return Container(
+      height: queryData.size.height,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          gradient: LinearGradient(
+              begin: FractionalOffset.centerLeft,
+              end: FractionalOffset.centerRight,
+              colors: [
+                Colors.black.withOpacity(0.0),
+                Colors.black.withOpacity(0.1),
+                Colors.black.withOpacity(0.3),
+              ],
+              stops: [
+                0.0,
+                0.3,
                 1.0
               ])),
     );
@@ -81,8 +102,18 @@ class SongStaticContent extends StatelessWidget {
                 child: Image.network(this.albumArtUrl)),
           ),
         ),
-        Text(this.songName, style: TextStyle(fontSize: 20),),
-        Text(this.albumArtist, style: TextStyle(fontSize: 18),),
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
+          child: Text(this.songName,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20),),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 15, right: 15),
+          child: Text(this.albumArtist,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18),),
+        ),
         Container(
           height: this.navBarSize.height,
         )
@@ -110,8 +141,9 @@ class SongStaticContent extends StatelessWidget {
     return Stack(
       children: [
         _getBlur(),
-        _getGradient(),
+        _getVerticalGradient(),
         _getMainSection(context),
+        _getHorizontalGradient(),
         GestureDetector(
             onTap: () => this.togglePause(true),
             child: _getPauseOverlay(context)),

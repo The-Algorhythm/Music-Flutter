@@ -33,8 +33,16 @@ class SongDescription extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(songName, style: TextStyle(fontSize: songNameFontSize),),
-                    Text(albumArtist, style: TextStyle(fontSize: artistAlbumFontSize),)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5, right: 65),
+                      child: Text(songName,
+                        style: TextStyle(fontSize: songNameFontSize),),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5, right: 65),
+                      child: Text(albumArtist,
+                        style: TextStyle(fontSize: artistAlbumFontSize),),
+                    )
                 ]),
               )
       )]

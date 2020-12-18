@@ -25,7 +25,7 @@ class ActionsToolbar extends StatelessWidget {
   Widget _getAction({IconData icon, double size=iconSize}) {
     return Container(
       width: iconContainerSize, height: iconContainerSize,
-      child: Icon(icon, size: size, color: Colors.grey[300]),
+      child: Icon(icon, size: size, color: Colors.white),
     );
   }
 }

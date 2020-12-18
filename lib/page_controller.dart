@@ -63,7 +63,9 @@ class _PagesHolderState extends State<PagesHolder> {
 
   @override
   Widget build(BuildContext context) {
-    _screens = [Discover(widget.initialSongs, _discoverStatus, _navBarSize), ProfilePage(setOverlay, clearOverlay)];
+    _screens = [
+      Discover(widget.initialSongs, _discoverStatus, _navBarSize),
+      ProfilePage(setOverlay, clearOverlay)];
     if(_discoverStatus == PageStatus.returning) {
       // if we are returning, change to active so we are only returning once
       setState(() {
@@ -103,7 +105,7 @@ class _PagesHolderState extends State<PagesHolder> {
                         WidgetSize(
                           onChange: (Size size) {
                             setState(() {
-                              _navBarSize = size;
+                              _navBarSize = new Size(size.width, size.height-1);
                             });
                           },
                           child: AppNavBar(_currentIdx, this.onNavBarTap),
