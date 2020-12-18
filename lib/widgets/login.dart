@@ -121,14 +121,18 @@ class _LoginPageState extends State<LoginPage> {
   _getPageContent(ctx) async {
     String js = "window.document.body.innerText";
     String val =  await flutterWebViewPlugin.evalJavascript(js);
+    Uri a = Uri.parse("");
     if(val.contains("current_user") && val.contains("token_info")) {
       setState(() {
         _isLoading = true;
       });
 
-      flutterWebViewPlugin.cleanCookies();
+      await flutterWebViewPlugin.cleanCookies();
       flutterWebViewPlugin.close();
-      Map<String, dynamic> data = jsonDecode(jsonDecode(val));
+      dynamic data = jsonDecode(val);
+      while(data is! Map<String, dynamic>) {
+        data = jsonDecode(jsonDecode(val));
+      }
       _login(ctx, data['token_info'], data['current_user']);
     }
   }
