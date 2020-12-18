@@ -12,8 +12,9 @@ import 'model/song.dart';
 class Discover extends StatefulWidget {
   PageStatus discoverStatus;
   final List<Song> initialSongs;
+  final Size navBarSize;
 
-  Discover(this.initialSongs, this.discoverStatus);
+  Discover(this.initialSongs, this.discoverStatus, this.navBarSize);
 
   @override
   _DiscoverState createState() => _DiscoverState();
@@ -100,10 +101,12 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
       String albumArtist = song.album + " - " + song.artist;
       if(song.canvasUrl != null) {
         return SongCanvasContent(song.canvasUrl, song.albumArtUrl, song.title,
-            albumArtist, _lastPlayerRatio, _playerRatio, _togglePause, _paused);
+            albumArtist, _lastPlayerRatio, _playerRatio, _togglePause, _paused,
+            widget.navBarSize);
       } else {
         return SongStaticContent(song.albumArtUrl, song.title, albumArtist,
-            _lastPlayerRatio, _playerRatio, _togglePause, _paused);
+            _lastPlayerRatio, _playerRatio, _togglePause, _paused,
+            widget.navBarSize);
       }
     });
   }

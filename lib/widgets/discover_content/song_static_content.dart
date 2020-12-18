@@ -12,9 +12,11 @@ class SongStaticContent extends StatelessWidget {
   final double lastPlayerRatio;
   final Function togglePause;
   final bool paused;
+  final Size navBarSize;
 
   SongStaticContent(this.albumArtUrl, this.songName, this.albumArtist,
-      this.lastPlayerRatio, this.playerRatio, this.togglePause, this.paused);
+      this.lastPlayerRatio, this.playerRatio, this.togglePause, this.paused,
+      this.navBarSize);
   static MediaQueryData queryData;
 
   Widget _getGradient() {
@@ -82,7 +84,7 @@ class SongStaticContent extends StatelessWidget {
         Text(this.songName, style: TextStyle(fontSize: 20),),
         Text(this.albumArtist, style: TextStyle(fontSize: 18),),
         Container(
-          height: 67,
+          height: this.navBarSize.height,
         )
       ],
     );
@@ -119,7 +121,7 @@ class SongStaticContent extends StatelessWidget {
           children: [
             ActionsToolbar(),
             ContentProgressIndicator(this.lastPlayerRatio, this.playerRatio),
-            Container(height: 67.0,),
+            Container(height: this.navBarSize.height,),
           ],
         ),
       ],

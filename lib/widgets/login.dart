@@ -119,7 +119,6 @@ class _LoginPageState extends State<LoginPage> {
       await new Future.delayed(const Duration(seconds: 1));
       String val = await flutterWebViewPlugin.evalJavascript(js);
       if (val != null && val.contains("current_user") && val.contains("token_info")) {
-        print('yep');
         if(this.mounted) {
           setState(() {
             _isLoading = true;

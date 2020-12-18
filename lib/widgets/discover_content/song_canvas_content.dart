@@ -18,10 +18,11 @@ class SongCanvasContent extends StatelessWidget {
   final double lastPlayerRatio;
   final Function togglePause;
   final bool paused;
+  final Size navBarSize;
 
   SongCanvasContent(this.videoUrl, this.albumArtUrl, this.songName,
       this.albumArtist, this.lastPlayerRatio, this.playerRatio,
-      this.togglePause, this.paused);
+      this.togglePause, this.paused, this.navBarSize);
 
   Widget get middleSection => Expanded(
     child: Row(
@@ -77,7 +78,7 @@ class SongCanvasContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
             children: [
               SongDescription(this.albumArtUrl, this.songName, this.albumArtist),
-              Container(height: 67,)
+              Container(height: this.navBarSize.height,)
             ]),
         GestureDetector(
             onTap: () => this.togglePause(true),
@@ -90,7 +91,7 @@ class SongCanvasContent extends StatelessWidget {
                 child: ActionsToolbar()
             ),
             ContentProgressIndicator(this.lastPlayerRatio, this.playerRatio),
-            Container(height: 67.0,)
+            Container(height: this.navBarSize.height,)
           ],
         ),
       ],
