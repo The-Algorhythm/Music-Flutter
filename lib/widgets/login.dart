@@ -18,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final loginUrl = 'http://musicbackend-dev.us-east-1.elasticbeanstalk.com/login/';
   final flutterWebViewPlugin = FlutterWebviewPlugin();
   bool _isLoading = false;
+  bool _isLoadingRecommend = false;
 
   Widget _getLoader() {
     if(_isLoading) {
@@ -33,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
             )),
           Padding(
             padding: const EdgeInsets.all(15.0),
-            child: Text("Gathering recommendations...",
+            child: Text(_isLoadingRecommend ? "Gathering recommendations..." : "Logging you in...",
               style: TextStyle(fontSize: 20, color: Color(0xFFC77DFF)),),
           )]);
     } else {
@@ -116,12 +117,18 @@ class _LoginPageState extends State<LoginPage> {
     String js = "window.document.body.innerText";
     Uri uri = Uri.parse(url);
     if(uri.queryParameters['code'] != null) {
+      if(this.mounted) {
+        setState(() {
+          _isLoading = true;
+        });
+      }
+      await flutterWebViewPlugin.hide();
       await new Future.delayed(const Duration(seconds: 1));
       String val = await flutterWebViewPlugin.evalJavascript(js);
       if (val != null && val.contains("current_user") && val.contains("token_info")) {
         if(this.mounted) {
           setState(() {
-            _isLoading = true;
+            _isLoadingRecommend = true;
           });
         }
 
