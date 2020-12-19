@@ -10,7 +10,7 @@ class SongCanvasContent extends StatelessWidget {
 
   static MediaQueryData queryData;
 
-  final String videoUrl;
+  final String canvasUrl;
   final String albumArtUrl;
   final String songName;
   final String albumArtist;
@@ -20,7 +20,7 @@ class SongCanvasContent extends StatelessWidget {
   final bool paused;
   final Size navBarSize;
 
-  SongCanvasContent(this.videoUrl, this.albumArtUrl, this.songName,
+  SongCanvasContent(this.canvasUrl, this.albumArtUrl, this.songName,
       this.albumArtist, this.lastPlayerRatio, this.playerRatio,
       this.togglePause, this.paused, this.navBarSize);
 
@@ -67,12 +67,27 @@ class SongCanvasContent extends StatelessWidget {
     );
   }
 
+  Widget _getCanvas() {
+    if(Uri.parse(canvasUrl).pathSegments.contains("video")) {
+      return VideoContent(canvasUrl, paused);
+    } else {
+      return Container(
+        decoration: BoxDecoration(
+        image: DecorationImage(
+          image: NetworkImage(canvasUrl),
+          fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     queryData = MediaQuery.of(context);
     return Stack(
       children: [
-        VideoContent(videoUrl, paused),
+        _getCanvas(),
         _getGradient(),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
