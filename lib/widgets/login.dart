@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
     profile.login(tokenInfo, userInfo['display_name'], userInfo['email'],
         userInfo['id'], userInfo['images'][0]['url'], userInfo['uri'],
         userInfo['product'], userInfo['country']);
-    List<Song> songs = await getRecommendations(numSongs: 10);
+    List<Song> songs = await getRecommendations(numSongs: 20);
     Navigator.pushReplacement(
       ctx, MaterialPageRoute(builder: (ctx) => PagesHolder(songs)),
     );

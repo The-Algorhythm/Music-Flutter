@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreenPage> {
     await profile.loginFromFile();
     if(profile.isLoggedIn) {
       // TODO make request for fresh profile data
-      List<Song> songs = await getRecommendations(numSongs: 10);
+      List<Song> songs = await getRecommendations(numSongs: 20);
       return Future.value(PagesHolder(songs));
     } else {
       return Future.value(LoginPage());

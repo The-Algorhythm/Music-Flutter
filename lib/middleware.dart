@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:music_app/model/song.dart';
 import 'package:music_app/model/user_profile.dart';
-import 'package:music_app/model/song.dart';
+
+enum NetworkResult { success, failure }
 
 String baseUrl = "musicbackend-dev.us-east-1.elasticbeanstalk.com";
 

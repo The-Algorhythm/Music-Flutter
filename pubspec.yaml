@@ -33,6 +33,7 @@ dependencies:
   flutter_swiper: ^1.1.6
   audioplayer: 0.8.1
   audioplayer_web: 0.7.1
+  pull_to_refresh: ^1.6.3
 
 dev_dependencies:
   flutter_test:

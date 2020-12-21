@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/widgets/discover_content/music_player.dart';
-import 'package:music_app/widgets/discover_content/song_canvas_content.dart';
-import 'package:music_app/widgets/discover_content/song_static_content.dart';
 import 'package:music_app/page_controller.dart';
+import 'package:music_app/widgets/discover_content_manager.dart';
 
+import 'middleware.dart';
 import 'model/song.dart';
 
 class Discover extends StatefulWidget {
@@ -32,7 +32,11 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
   Duration _lastUpdate = Duration(seconds: 0);
   Widget overlay = Container();
   List<Song> _songs;
-  int _currentIdx;
+  int _currentIdx = 0;
+  bool _fetchingSongs = false;
+
+  static const int maxSongs = 200;
+  static const double preloadBuffer = 10;  // The minimum number of unseen posts to try to maintain
 
   @override
   void initState() {
@@ -61,11 +65,20 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
     setState(() {
       _paused = false;
       _currentIdx = idx;
-      print("Setting current index to: $_currentIdx");
     });
     await _musicPlayer.stop();
     await _musicPlayer.play(_songs[_currentIdx].previewUrl);
-    print("Playing song with index: $_currentIdx");
+
+    //Fetch more songs if there are only a few left in the buffer
+    if(_currentIdx >= (_songs.length - preloadBuffer) && !_fetchingSongs) {
+      print("Fetching more songs to keep buffer...");
+      _fetchingSongs = true;
+      List<Song> songs = await getRecommendations(numSongs: 50);
+      setState(() {
+        _songs.addAll(songs);
+      });
+      _fetchingSongs = false;
+    }
   }
 
   void setOverlay(Widget overlayWidget) {
@@ -95,20 +108,42 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
     }
   }
 
-  List<Widget> _getSongContentPages() {
-    return List.generate(_songs.length,(i){
-      Song song = _songs[i];
-      String albumArtist = song.album + " - " + song.artist;
-      if(song.canvasUrl != null) {
-        return SongCanvasContent(song.canvasUrl, song.albumArtUrl, song.title,
-            albumArtist, _lastPlayerRatio, _playerRatio, _togglePause, _paused,
-            widget.navBarSize);
-      } else {
-        return SongStaticContent(song.albumArtUrl, song.title, albumArtist,
-            _lastPlayerRatio, _playerRatio, _togglePause, _paused,
-            widget.navBarSize);
+  Future<List<Song>> _onRefresh() async {
+    print("Discover onRefresh");
+    if(!_fetchingSongs) {
+      // Initially get a small amount of songs to reduce load time
+      _fetchingSongs = true;
+      List<Song> songs = await getRecommendations(numSongs: 20);
+      setState(() {
+        _songs = songs;
+        _currentIdx = 0;
+      });
+      _onPageChanged(0);
+      _fetchingSongs = false;
+    }
+    return _songs;
+  }
+
+  Future<List<Song>> _onLoadMore() async {
+    print("Discover onLoadMore");
+    if(!_fetchingSongs) {
+      _fetchingSongs = true;
+      List<Song> songs = await getRecommendations(numSongs: 50);
+      setState(() {
+        _songs.addAll(songs);
+      });
+      if(_songs.length > maxSongs && (_currentIdx > maxSongs - _songs.length)) {
+        // Remove songs far back in list so we don't need to keep track of too many
+        int cutoff = maxSongs - _songs.length;
+        List<Song> sublist = _songs.sublist(cutoff);
+        setState(() {
+          _songs = sublist;
+          _currentIdx -= cutoff;
+        });
       }
-    });
+      _fetchingSongs = false;
+    }
+    return _songs;
   }
 
   @override
@@ -120,11 +155,8 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
     } else if(!_paused && widget.discoverStatus == PageStatus.inactive) {
       _togglePause(false);
     }
-    return PageView(
-      scrollDirection: Axis.vertical,
-      onPageChanged: _onPageChanged,
-      children: _getSongContentPages()
-    );
+    return ContentManager(_songs, _lastPlayerRatio, _playerRatio, _togglePause,
+        _onPageChanged, _onRefresh, _onLoadMore, _paused, widget.navBarSize);
   }
 
   @override
