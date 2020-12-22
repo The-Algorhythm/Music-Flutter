@@ -33,6 +33,11 @@ class _ContentManagerState extends State<ContentManager> {
   final PageController _pageController = PageController();
   RefreshController _refreshController =
   RefreshController(initialRefresh: false);
+  static const double preloadBuffer = 15;  // The minimum number of unseen posts to try to maintain
+  bool _doJump = false;
+
+  // the Unix timestamp for when loadMore can be called again. Used to prevent it being called twice in a row
+  int loadMoreTime = -1;
 
   @override
   void initState() {
@@ -42,11 +47,11 @@ class _ContentManagerState extends State<ContentManager> {
     });
   }
 
-  List<Widget> _getSongContentPages() {
-    return List.generate(_songs.length,(i){
-      Song song = _songs[i];
+  List<Widget> _getSongContentPages(songs) {
+    return List.generate(songs.length,(i){
+      Song song = songs[i];
       String albumArtist = song.album + " - " + song.artist;
-      if(song.canvasUrl != null) {
+      if(song.canvasUrl != null && song.canvasUrl != "") {
         return SongCanvasContent(song.canvasUrl, song.albumArtUrl, song.title,
             albumArtist, widget.lastPlayerRatio, widget.playerRatio,
             widget.togglePause, widget.paused, widget.navBarSize);
@@ -67,18 +72,44 @@ class _ContentManagerState extends State<ContentManager> {
   }
 
   void _onLoadMore() async {
-    List<Song> songs = await widget.onLoadMore();
-    setState(() {
-      _songs = songs;
-    });
-    _refreshController.loadComplete();
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+    if(timestamp >= loadMoreTime) {
+      Map<String, dynamic> response = await widget.onLoadMore();
+      setState(() {
+        _songs = response["songs"];
+        _currentIdx = response["currentIdx"];
+        _doJump = true;
+      });
+      _refreshController.loadComplete();
+      loadMoreTime = DateTime.now().millisecondsSinceEpoch + 500;
+    } else {
+      // This should only happen when the discover.dart's onLoadMore removes songs
+      _refreshController.loadComplete();
+      ScrollPosition position = _pageController.position;
+      double offset = position.maxScrollExtent % position.viewportDimension;
+      double newPos = (_currentIdx - 1) * position.viewportDimension;
+      _pageController.jumpTo(newPos + offset);
+      setState(() {
+        _currentIdx++;
+        _doJump = true;
+      });
+    }
   }
 
-  void _onPageChanged(idx) {
+  void _onPageChanged(idx) async {
     setState(() {
       _currentIdx = idx;
     });
     widget.onPageChanged(idx);
+    //Fetch more songs if there are only a few left in the buffer
+    if (_currentIdx >= (_songs.length - preloadBuffer)) {
+      print("Fetching more songs to keep buffer...");
+      Map<String, dynamic> response = await widget.onLoadMore();
+      setState(() {
+        _songs = response["songs"];
+        _currentIdx = response["currentIdx"] - 1;
+      });
+    }
   }
 
   bool _handleNotification(ScrollNotification notification) {
@@ -98,6 +129,10 @@ class _ContentManagerState extends State<ContentManager> {
 
   @override
   Widget build(BuildContext context) {
+    if(_doJump) {
+      _pageController.animateToPage(_currentIdx, duration: Duration(milliseconds: 500), curve: Curves.ease);
+      _doJump = false;
+    }
     return NotificationListener(
       onNotification: _handleNotification,
       child: SmartRefresher(
@@ -114,7 +149,7 @@ class _ContentManagerState extends State<ContentManager> {
           controller: _pageController,
           slivers: <Widget>[
             SliverFillViewport(
-                delegate: SliverChildListDelegate(_getSongContentPages())
+                delegate: SliverChildListDelegate(_getSongContentPages(_songs))
             )],
         ),
       ),

@@ -35,9 +35,6 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
   int _currentIdx = 0;
   bool _fetchingSongs = false;
 
-  static const int maxSongs = 200;
-  static const double preloadBuffer = 10;  // The minimum number of unseen posts to try to maintain
-
   @override
   void initState() {
     super.initState();
@@ -68,17 +65,6 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
     });
     await _musicPlayer.stop();
     await _musicPlayer.play(_songs[_currentIdx].previewUrl);
-
-    //Fetch more songs if there are only a few left in the buffer
-    if(_currentIdx >= (_songs.length - preloadBuffer) && !_fetchingSongs) {
-      print("Fetching more songs to keep buffer...");
-      _fetchingSongs = true;
-      List<Song> songs = await getRecommendations(numSongs: 50);
-      setState(() {
-        _songs.addAll(songs);
-      });
-      _fetchingSongs = false;
-    }
   }
 
   void setOverlay(Widget overlayWidget) {
@@ -120,30 +106,39 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
       });
       _onPageChanged(0);
       _fetchingSongs = false;
+    } else {
+      print("Refresh skipped - already fetching songs");
     }
     return _songs;
   }
 
-  Future<List<Song>> _onLoadMore() async {
+  Future<Map<String, dynamic>> _onLoadMore() async {
     print("Discover onLoadMore");
     if(!_fetchingSongs) {
       _fetchingSongs = true;
       List<Song> songs = await getRecommendations(numSongs: 50);
       setState(() {
         _songs.addAll(songs);
+        _currentIdx++;
       });
-      if(_songs.length > maxSongs && (_currentIdx > maxSongs - _songs.length)) {
-        // Remove songs far back in list so we don't need to keep track of too many
-        int cutoff = maxSongs - _songs.length;
-        List<Song> sublist = _songs.sublist(cutoff);
-        setState(() {
-          _songs = sublist;
-          _currentIdx -= cutoff;
-        });
-      }
+      // TODO add this back if there starts to be lag from too many songs being
+      //  loaded at once. If it is added back, there will need to be some
+      //  debugging to make things work smoothly when dynamically keeping the
+      //  song buffer.
+//      if(_songs.length > maxSongs && (_currentIdx > maxSongs - _songs.length)) {
+//        // Remove songs far back in list so we don't need to keep track of too many
+//        int cutoff = _songs.length - maxSongs;
+//        List<Song> sublist = _songs.sublist(cutoff);
+//        setState(() {
+//          _currentIdx = max(0, _currentIdx-cutoff);
+//          _songs = sublist;
+//        });
+//      }
       _fetchingSongs = false;
+    } else {
+      print("Load more skipped - already fetching songs");
     }
-    return _songs;
+    return {"currentIdx": _currentIdx, "songs": _songs};
   }
 
   @override
