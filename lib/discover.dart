@@ -69,6 +69,8 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
       _currentIdx = idx;
     });
     await _musicPlayer.stop();
+    _playerRatio = 0.0;
+    _lastPlayerRatio = 0.0;
     await _musicPlayer.play(_songs[_currentIdx].previewUrl);
   }
 

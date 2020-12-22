@@ -62,8 +62,8 @@ class ContentManagerState extends State<ContentManager> {
       double lastPlayerRatio = widget.lastPlayerRatio;
       double playerRatio = widget.playerRatio;
       if(widget.playingUrl != song.previewUrl) {
-        lastPlayerRatio = 0;
-        playerRatio = 0;
+        lastPlayerRatio = 0.0;
+        playerRatio = 0.0;
       }
       if(song.canvasUrl != null && song.canvasUrl != "") {
         return SongCanvasContent(song.canvasUrl, song.albumArtUrl, song.title,
