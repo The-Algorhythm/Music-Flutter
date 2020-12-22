@@ -8,16 +8,17 @@ class ActionsToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var queryData = MediaQuery.of(context);
     return Container(  // Top section
       width: 100.0,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           _getAction(icon: MusicAppIcons.heart),
           _getAction(icon: MusicAppIcons.spotify),
           _getAction(icon: MusicAppIcons.share),
           _getAction(icon: Icons.more_horiz, size: 40.0),
-          Container(width: iconContainerSize, height: iconContainerSize,)
+          Container(height: queryData.size.height / 3.75,)
         ])
     );
   }

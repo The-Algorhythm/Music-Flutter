@@ -96,11 +96,9 @@ class SongStaticContent extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Center(
-            child: Container(
-                width: queryData.size.width*0.75,
-                child: Image.network(this.albumArtUrl)),
-          ),
+          child: Container(
+              width: queryData.size.width*0.75,
+              child: Image.network(this.albumArtUrl)),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
@@ -148,10 +146,13 @@ class SongStaticContent extends StatelessWidget {
             onTap: () => this.togglePause(true),
             child: _getPauseOverlay(context)),
         Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            ActionsToolbar(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: ActionsToolbar(),
+            ),
             ContentProgressIndicator(this.lastPlayerRatio, this.playerRatio),
             Container(height: this.navBarSize.height,),
           ],
