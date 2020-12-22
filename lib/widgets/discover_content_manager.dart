@@ -11,6 +11,7 @@ class ContentManager extends StatefulWidget {
 
   final double lastPlayerRatio;
   final double playerRatio;
+  final String playingUrl;
   final Function togglePause;
   final Function onPageChanged;
   final Function onRefresh;
@@ -19,14 +20,14 @@ class ContentManager extends StatefulWidget {
   final Size navBarSize;
 
   ContentManager(this.initialSongs, this.lastPlayerRatio, this.playerRatio,
-      this.togglePause, this.onPageChanged, this.onRefresh, this.onLoadMore,
-      this.paused, this.navBarSize);
+      this.playingUrl, this.togglePause, this.onPageChanged, this.onRefresh,
+      this.onLoadMore, this.paused, this.navBarSize, {Key key}) : super(key: key);
 
   @override
-  _ContentManagerState createState() => _ContentManagerState();
+  ContentManagerState createState() => ContentManagerState();
 }
 
-class _ContentManagerState extends State<ContentManager> {
+class ContentManagerState extends State<ContentManager> {
   List<Song> _songs;
   int _lastReportedPage = 0;
   int _currentIdx = 0;
@@ -47,18 +48,31 @@ class _ContentManagerState extends State<ContentManager> {
     });
   }
 
+ void jumpToTop() {
+    setState(() {
+      _currentIdx = 0;
+      _doJump = true;
+    });
+ }
+
   List<Widget> _getSongContentPages(songs) {
     return List.generate(songs.length,(i){
       Song song = songs[i];
       String albumArtist = song.album + " - " + song.artist;
+      double lastPlayerRatio = widget.lastPlayerRatio;
+      double playerRatio = widget.playerRatio;
+      if(widget.playingUrl != song.previewUrl) {
+        lastPlayerRatio = 0;
+        playerRatio = 0;
+      }
       if(song.canvasUrl != null && song.canvasUrl != "") {
         return SongCanvasContent(song.canvasUrl, song.albumArtUrl, song.title,
-            albumArtist, widget.lastPlayerRatio, widget.playerRatio,
-            widget.togglePause, widget.paused, widget.navBarSize);
+            albumArtist, lastPlayerRatio, playerRatio, widget.togglePause,
+            widget.paused, widget.navBarSize);
       } else {
         return SongStaticContent(song.albumArtUrl, song.title, albumArtist,
-            widget.lastPlayerRatio, widget.playerRatio, widget.togglePause,
-            widget.paused, widget.navBarSize);
+            lastPlayerRatio, playerRatio, widget.togglePause, widget.paused,
+            widget.navBarSize);
       }
     });
   }

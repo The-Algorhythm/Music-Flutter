@@ -24,6 +24,7 @@ class _PagesHolderState extends State<PagesHolder> {
   PageController _pageController = new PageController();
   PageStatus _discoverStatus = PageStatus.active;
   Size _navBarSize = Size(0, 0);
+  final GlobalKey<DiscoverState> _discoverState = GlobalKey<DiscoverState>();
 
   Widget overlay = Container();
 
@@ -59,12 +60,17 @@ class _PagesHolderState extends State<PagesHolder> {
     setState(() {
       _pageController.jumpToPage(index);
     });
+    if(index == _currentIdx) {
+      if(index == 0) {
+        _discoverState.currentState.jumpToTop();
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     _screens = [
-      Discover(widget.initialSongs, _discoverStatus, _navBarSize),
+      Discover(widget.initialSongs, _discoverStatus, _navBarSize, key: _discoverState),
       ProfilePage(setOverlay, clearOverlay)];
     if(_discoverStatus == PageStatus.returning) {
       // if we are returning, change to active so we are only returning once

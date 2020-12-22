@@ -14,15 +14,15 @@ class Discover extends StatefulWidget {
   final List<Song> initialSongs;
   final Size navBarSize;
 
-  Discover(this.initialSongs, this.discoverStatus, this.navBarSize);
+  Discover(this.initialSongs, this.discoverStatus, this.navBarSize, {Key key}) : super(key: key);
 
   @override
-  _DiscoverState createState() => _DiscoverState();
+  DiscoverState createState() => DiscoverState();
 }
 
 enum PlayerState { stopped, playing, paused }
 
-class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
+class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
 
   MusicPlayer _musicPlayer;
   double _playerRatio;
@@ -34,6 +34,7 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
   List<Song> _songs;
   int _currentIdx = 0;
   bool _fetchingSongs = false;
+  final GlobalKey<ContentManagerState> _contentManagerState = GlobalKey<ContentManagerState>();
 
   @override
   void initState() {
@@ -43,6 +44,10 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
     });
     _musicPlayer = MusicPlayer(_songs[0].previewUrl, _onAudioPositionChanged);
     _musicPlayer.initAudioPlayer();
+  }
+
+  void jumpToTop() {
+    _contentManagerState.currentState.jumpToTop();
   }
 
   void _onAudioPositionChanged(Duration p) {
@@ -150,8 +155,9 @@ class _DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin 
     } else if(!_paused && widget.discoverStatus == PageStatus.inactive) {
       _togglePause(false);
     }
-    return ContentManager(_songs, _lastPlayerRatio, _playerRatio, _togglePause,
-        _onPageChanged, _onRefresh, _onLoadMore, _paused, widget.navBarSize);
+    return ContentManager(_songs, _lastPlayerRatio, _playerRatio,
+        _musicPlayer.currentUrl, _togglePause, _onPageChanged, _onRefresh,
+        _onLoadMore, _paused, widget.navBarSize, key: _contentManagerState);
   }
 
   @override
