@@ -26,6 +26,8 @@ class _PagesHolderState extends State<PagesHolder> {
   Size _navBarSize = Size(0, 0);
   final GlobalKey<DiscoverState> _discoverState = GlobalKey<DiscoverState>();
 
+  static final int _discoverIdx = 0;
+
   Widget overlay = Container();
 
   void setOverlay(Widget overlayWidget) {
@@ -46,8 +48,9 @@ class _PagesHolderState extends State<PagesHolder> {
   void _onPageChanged(int idx) {
     setState(() {
       _currentIdx = idx;
+
       // Update Discover page status
-      if(idx == 0) {
+      if(idx == _discoverIdx) {
         // We are coming to the Discover page
         _discoverStatus = PageStatus.returning;
       } else {
@@ -57,14 +60,14 @@ class _PagesHolderState extends State<PagesHolder> {
   }
 
   void onNavBarTap(index) {
-    setState(() {
-      _pageController.jumpToPage(index);
-    });
     if(index == _currentIdx) {
-      if(index == 0) {
+      if(index == _discoverIdx) {
         _discoverState.currentState.jumpToTop();
       }
     }
+    setState(() {
+      _pageController.jumpToPage(index);
+    });
   }
 
   @override
