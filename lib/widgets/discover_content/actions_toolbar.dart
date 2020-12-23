@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:music_app/app_icons.dart';
 import 'package:music_app/discover.dart';
+import 'package:like_button/like_button.dart';
 
-class ActionsToolbar extends StatelessWidget {
+class ActionsToolbar extends StatefulWidget {
+  final Function onInteraction;
+  bool likedCurrentSong;
+
+  ActionsToolbar(this.onInteraction, this.likedCurrentSong, {Key key}): super(key: key);
+  @override
+  ActionsToolbarState createState() => ActionsToolbarState();
+}
+
+class ActionsToolbarState extends State<ActionsToolbar> {
 
   static const double iconContainerSize = 60.0;
   static const double iconSize = 35.0;
-  final bool likedCurrentSong;
+  bool _likedCurrentSong;
+  final GlobalKey<LikeButtonState> _likeButtonState = GlobalKey<LikeButtonState>();
 
-  final Function onInteraction;
-
-  ActionsToolbar(this.onInteraction, this.likedCurrentSong);
+  @override
+  void initState() {
+    _likedCurrentSong = widget.likedCurrentSong;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +32,7 @@ class ActionsToolbar extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          _getAction(icon: MusicAppIcons.heart, color: likedCurrentSong ? Colors.red : Colors.white),
+          _getLike(MusicAppIcons.heart),
           _getAction(icon: MusicAppIcons.spotify),
           _getAction(icon: MusicAppIcons.share),
           _getAction(icon: Icons.more_horiz, size: 40.0),
@@ -29,14 +41,50 @@ class ActionsToolbar extends StatelessWidget {
     );
   }
 
+  Widget _getLike(IconData icon) {
+    return LikeButton(
+      key: _likeButtonState,
+      size: iconContainerSize,
+      circleColor:
+      CircleColor(start: Color(0xFFc77dff), end: Color(0xFFAF47FF)),
+      bubblesColor: BubblesColor(
+        dotPrimaryColor: Color(0xFFc77dff),
+        dotSecondaryColor: Color(0xFFAF47FF),
+      ),
+      likeBuilder: (bool isLiked) {
+        return Icon(
+          icon,
+          color: isLiked ? Colors.red : Colors.white,
+          size: iconSize,
+        );
+      },
+      onTap: _onLikeButtonTapped,
+      isLiked: _likedCurrentSong,
+    );
+  }
+
+  Future<bool> _onLikeButtonTapped(bool isLiked) async {
+    _likedCurrentSong ? widget.onInteraction(Interaction.UNLIKE): widget.onInteraction(Interaction.LIKE);
+    setState(() {
+      _likedCurrentSong = !_likedCurrentSong;
+    });
+    return _likedCurrentSong;
+  }
+
+  void externalLike() {
+    _likedCurrentSong = false;  // Set it to false initially so it will be set to true when onTap is called
+    _likeButtonState.currentState.onTap();
+    setState(() {
+      _likedCurrentSong = true;
+    });
+  }
+
   Widget _getAction({IconData icon, double size=iconSize, Color color=Colors.white}) {
     return Container(
       width: iconContainerSize, height: iconContainerSize,
       child: IconButton(
           icon: Icon(icon, size: size, color: color),
-          onPressed: (){
-            likedCurrentSong ? onInteraction(Interaction.UNLIKE): onInteraction(Interaction.LIKE);
-          },
+          onPressed: (){externalLike();},
       ),
     );
   }

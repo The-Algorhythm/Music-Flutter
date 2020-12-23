@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/app_icons.dart';
+import 'package:vector_math/vector_math.dart' as math;
 
 class PostOverlay extends StatefulWidget {
   final OverlayType overlayType;
@@ -20,14 +23,12 @@ class PostOverlayState extends State<PostOverlay> with TickerProviderStateMixin 
   Animation<double> _fadeInFadeOut;
   Animation<double> _growShrink;
 
-  bool _postLiked = true;
-  bool _didReverse = false;
   Offset _likePosition = new Offset(0, 0);
 
   @override
   void initState() {
     super.initState();
-    animation = AnimationController(vsync: this, duration: Duration(milliseconds: 250),);
+    animation = AnimationController(vsync: this, duration: Duration(milliseconds: 200),);
     _fadeInFadeOut = Tween<double>(begin: 0.0, end: 0.8).animate(animation);
     _growShrink = Tween<double>(begin: 0.5, end: 1.5).animate(animation);
 
@@ -44,7 +45,7 @@ class PostOverlayState extends State<PostOverlay> with TickerProviderStateMixin 
         width: queryData.size.width,
         height: queryData.size.height - queryData.viewPadding.top,
         color: Colors.black.withOpacity(0.4),
-        child: Icon(Icons.play_arrow, size: 200, color: Colors.white.withOpacity(0.7))
+        child: Icon(Icons.play_arrow, size: 150, color: Colors.white.withOpacity(0.7))
     ) : Container(
       width: queryData.size.width,
       height: queryData.size.height - queryData.viewPadding.top,
@@ -56,20 +57,31 @@ class PostOverlayState extends State<PostOverlay> with TickerProviderStateMixin 
     setState(() {
       _likePosition = tapPosition;
     });
-    _postLiked = true;
     animation.forward();
   }
 
+  /// Generates a random integer that can be either positive or negative
+  int _randPosNeg(int max) {
+    var randomGenerator = Random();
+
+    var positive = randomGenerator.nextBool();
+    var randInt = randomGenerator.nextInt(max);
+    return positive ? randInt : 0 - randInt;
+  }
+
   Widget _getLikeOverlay(context, likePosition) {
-    double iconSize = 100;
+    double iconSize = 75;
     return Positioned(
       top: likePosition.dy - iconSize/2,
       left: likePosition.dx - iconSize/2,
-      child: FadeTransition(
-        opacity: _fadeInFadeOut,
-        child: ScaleTransition(
-          scale: _growShrink,
-          child: Icon(MusicAppIcons.heart, size: iconSize, color: Colors.red),
+      child: Transform(
+        transform: Matrix4.rotationZ(math.radians(_randPosNeg(30).toDouble())),
+        child: FadeTransition(
+          opacity: _fadeInFadeOut,
+          child: ScaleTransition(
+            scale: _growShrink,
+            child: Icon(MusicAppIcons.heart, size: iconSize, color: Colors.red),
+          ),
         ),
       ),
     );

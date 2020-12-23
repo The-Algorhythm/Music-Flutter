@@ -28,6 +28,7 @@ class _SongStaticContentState extends State<SongStaticContent> {
   final GlobalKey<PostOverlayState> _likeOverlayState = GlobalKey<PostOverlayState>();
   Widget _likeOverlay;
   Offset _lastDoubletapPosition;
+  final GlobalKey<ActionsToolbarState> _actionsToolbarState = GlobalKey<ActionsToolbarState>();
 
   static MediaQueryData queryData;
 
@@ -157,6 +158,7 @@ class _SongStaticContentState extends State<SongStaticContent> {
             onTap: (){widget.onInteraction(Interaction.PAUSE, byUser: true);},
             onDoubleTapDown: _handleDoubleTapDown,
             onDoubleTap: (){
+              _actionsToolbarState.currentState.externalLike();
               _likeOverlayState.currentState.like(_lastDoubletapPosition);
               widget.onInteraction(Interaction.LIKE);
               },
@@ -172,7 +174,10 @@ class _SongStaticContentState extends State<SongStaticContent> {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: ActionsToolbar(widget.onInteraction, widget.likedCurrentSong),
+              child: ActionsToolbar(
+                  widget.onInteraction,
+                  widget.likedCurrentSong,
+                  key: _actionsToolbarState),
             ),
             ContentProgressIndicator(widget.lastPlayerRatio, widget.playerRatio),
             Container(height: widget.navBarSize.height,),

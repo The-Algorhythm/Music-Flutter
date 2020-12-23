@@ -139,12 +139,14 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
   }
 
   void _like() {
+    print("Liked song");
     setState(() {
       _likedCurrentSong = true;
     });
   }
 
   void _unlike() {
+    print("Unliked song");
     setState(() {
       _likedCurrentSong = false;
     });
