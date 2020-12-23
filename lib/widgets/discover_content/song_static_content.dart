@@ -2,10 +2,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:music_app/discover.dart';
 import 'package:music_app/widgets/discover_content/actions_toolbar.dart';
+import 'package:music_app/widgets/discover_content/overlay.dart';
 import 'package:music_app/widgets/discover_content/progress_indicator.dart';
 
-class SongStaticContent extends StatelessWidget {
-
+class SongStaticContent extends StatefulWidget {
   final String albumArtUrl;
   final String songName;
   final String albumArtist;
@@ -19,7 +19,23 @@ class SongStaticContent extends StatelessWidget {
   SongStaticContent(this.albumArtUrl, this.songName, this.albumArtist,
       this.lastPlayerRatio, this.playerRatio, this.onInteraction, this.paused,
       this.likedCurrentSong, this.navBarSize);
+  @override
+  _SongStaticContentState createState() => _SongStaticContentState();
+}
+
+class _SongStaticContentState extends State<SongStaticContent> {
+
+  final GlobalKey<PostOverlayState> _likeOverlayState = GlobalKey<PostOverlayState>();
+  Widget _likeOverlay;
+  Offset _tapPosition;
+
   static MediaQueryData queryData;
+
+  @override
+  void initState() {
+    super.initState();
+    _likeOverlay = PostOverlay(OverlayType.LIKE, key: _likeOverlayState);
+  }
 
   Widget _getVerticalGradient() {
     return Container(
@@ -71,7 +87,7 @@ class SongStaticContent extends StatelessWidget {
             child: new Container(
                 width: 2*queryData.size.width,
                 height: queryData.size.height-queryData.viewPadding.top,
-                child: Image.network(this.albumArtUrl, scale: 0.1,),
+                child: Image.network(widget.albumArtUrl, scale: 0.1,),
             )
         ),
         ClipRect(
@@ -100,39 +116,32 @@ class SongStaticContent extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           child: Container(
               width: queryData.size.width*0.75,
-              child: Image.network(this.albumArtUrl)),
+              child: Image.network(widget.albumArtUrl)),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
-          child: Text(this.songName,
+          child: Text(widget.songName,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 20),),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 15, right: 15),
-          child: Text(this.albumArtist,
+          child: Text(widget.albumArtist,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18),),
         ),
         Container(
-          height: this.navBarSize.height,
+          height: widget.navBarSize.height,
         )
       ],
     );
   }
 
-  Widget _getPauseOverlay(context) {
-    MediaQueryData queryData = MediaQuery.of(context);
-    return this.paused ? Container(
-        width: queryData.size.width,
-        height: queryData.size.height - queryData.viewPadding.top,
-        color: Colors.black.withOpacity(0.4),
-        child: Icon(Icons.play_arrow, size: 200, color: Colors.white.withOpacity(0.7))
-    ) : Container(
-      width: queryData.size.width,
-      height: queryData.size.height - queryData.viewPadding.top,
-      color: Colors.black.withOpacity(0.0),
-    );
+  void _handleTapDown(TapDownDetails details) {
+    final RenderBox referenceBox = context.findRenderObject();
+    setState(() {
+      _tapPosition = referenceBox.globalToLocal(details.globalPosition);
+    });
   }
 
   @override
@@ -145,19 +154,28 @@ class SongStaticContent extends StatelessWidget {
         _getMainSection(context),
         _getHorizontalGradient(),
         GestureDetector(
-            onTap: (){this.onInteraction(Interaction.PAUSE, byUser: true);},
-            onDoubleTap: (){this.onInteraction(Interaction.LIKE);},
-            child: _getPauseOverlay(context)),
+            onTapDown: _handleTapDown,
+            onTap: (){widget.onInteraction(Interaction.PAUSE, byUser: true);},
+            onDoubleTap: (){
+              _likeOverlayState.currentState.like(_tapPosition);
+              widget.onInteraction(Interaction.LIKE);
+              },
+            child: Stack(
+              children: [
+                PostOverlay(OverlayType.PAUSE, isPaused: widget.paused),
+                _likeOverlay,
+              ],
+            )),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: ActionsToolbar(this.onInteraction, this.likedCurrentSong),
+              child: ActionsToolbar(widget.onInteraction, widget.likedCurrentSong),
             ),
-            ContentProgressIndicator(this.lastPlayerRatio, this.playerRatio),
-            Container(height: this.navBarSize.height,),
+            ContentProgressIndicator(widget.lastPlayerRatio, widget.playerRatio),
+            Container(height: widget.navBarSize.height,),
           ],
         ),
       ],

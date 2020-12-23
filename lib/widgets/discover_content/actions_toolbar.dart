@@ -24,7 +24,7 @@ class ActionsToolbar extends StatelessWidget {
           _getAction(icon: MusicAppIcons.spotify),
           _getAction(icon: MusicAppIcons.share),
           _getAction(icon: Icons.more_horiz, size: 40.0),
-          Container(height: queryData.size.height / 3.75,)
+          Container(height: queryData.size.height / 3.75,),
         ])
     );
   }

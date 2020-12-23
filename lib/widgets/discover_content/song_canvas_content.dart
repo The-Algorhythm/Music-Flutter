@@ -7,10 +7,8 @@ import 'package:music_app/widgets/discover_content/video_content.dart';
 import 'package:music_app/widgets/discover_content/song_description.dart';
 import 'package:music_app/widgets/discover_content/actions_toolbar.dart';
 
-class SongCanvasContent extends StatelessWidget {
-
-  static MediaQueryData queryData;
-
+import 'overlay.dart';
+class SongCanvasContent extends StatefulWidget {
   final String canvasUrl;
   final String albumArtUrl;
   final String songName;
@@ -25,6 +23,22 @@ class SongCanvasContent extends StatelessWidget {
   SongCanvasContent(this.canvasUrl, this.albumArtUrl, this.songName,
       this.albumArtist, this.lastPlayerRatio, this.playerRatio,
       this.onInteraction, this.paused, this.likedCurrentSong, this.navBarSize);
+
+  @override
+  _SongCanvasContentState createState() => _SongCanvasContentState();
+}
+class _SongCanvasContentState extends State<SongCanvasContent> {
+
+  static MediaQueryData queryData;
+  final GlobalKey<PostOverlayState> _likeOverlayState = GlobalKey<PostOverlayState>();
+  Widget _likeOverlay;
+  Offset _tapPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    _likeOverlay = PostOverlay(OverlayType.LIKE, key: _likeOverlayState);
+  }
 
   Widget _getGradient() {
     return Container(
@@ -45,33 +59,26 @@ class SongCanvasContent extends StatelessWidget {
     );
   }
 
-  Widget _getPauseOverlay(context) {
-    MediaQueryData queryData = MediaQuery.of(context);
-    return this.paused ? Container(
-        width: queryData.size.width,
-        height: queryData.size.height - queryData.viewPadding.top,
-        color: Colors.black.withOpacity(0.4),
-        child: Icon(Icons.play_arrow, size: 200, color: Colors.white.withOpacity(0.7))
-    ) : Container(
-      width: queryData.size.width,
-      height: queryData.size.height - queryData.viewPadding.top,
-      color: Colors.black.withOpacity(0.0),
-    );
-  }
-
   Widget _getCanvas() {
-    if(Uri.parse(canvasUrl).pathSegments.contains("video")) {
-      return VideoContent(canvasUrl, paused);
+    if(Uri.parse(widget.canvasUrl).pathSegments.contains("video")) {
+      return VideoContent(widget.canvasUrl, widget.paused);
     } else {
       return Container(
         decoration: BoxDecoration(
         image: DecorationImage(
-          image: NetworkImage(canvasUrl),
+          image: NetworkImage(widget.canvasUrl),
           fit: BoxFit.cover,
           ),
         ),
       );
     }
+  }
+
+  void _handleTapDown(TapDownDetails details) {
+    final RenderBox referenceBox = context.findRenderObject();
+    setState(() {
+      _tapPosition = referenceBox.globalToLocal(details.globalPosition);
+    });
   }
 
   @override
@@ -84,22 +91,31 @@ class SongCanvasContent extends StatelessWidget {
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              SongDescription(this.albumArtUrl, this.songName, this.albumArtist),
-              Container(height: this.navBarSize.height,)
+              SongDescription(widget.albumArtUrl, widget.songName, widget.albumArtist),
+              Container(height: widget.navBarSize.height,)
             ]),
         GestureDetector(
-            onTap: (){this.onInteraction(Interaction.PAUSE, byUser: true);},
-            onDoubleTap: (){this.onInteraction(Interaction.LIKE);},
-            child: _getPauseOverlay(context)),
+            onTap: (){widget.onInteraction(Interaction.PAUSE, byUser: true);},
+            onTapDown: _handleTapDown,
+            onDoubleTap: () {
+              _likeOverlayState.currentState.like(_tapPosition);
+              widget.onInteraction(Interaction.LIKE);
+              },
+            child: Stack(
+              children: [
+                PostOverlay(OverlayType.PAUSE, isPaused: widget.paused),
+                _likeOverlay,
+              ],
+            )),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
               alignment: Alignment.bottomRight,
-                child: ActionsToolbar(this.onInteraction, this.likedCurrentSong)
+                child: ActionsToolbar(widget.onInteraction, widget.likedCurrentSong)
             ),
-            ContentProgressIndicator(this.lastPlayerRatio, this.playerRatio),
-            Container(height: this.navBarSize.height,)
+            ContentProgressIndicator(widget.lastPlayerRatio, widget.playerRatio),
+            Container(height: widget.navBarSize.height,)
           ],
         ),
       ],
