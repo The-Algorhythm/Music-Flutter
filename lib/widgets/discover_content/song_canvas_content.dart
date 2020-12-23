@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:music_app/discover.dart';
 import 'package:music_app/widgets/discover_content/progress_indicator.dart';
 
 import 'package:music_app/widgets/discover_content/video_content.dart';
@@ -16,23 +17,14 @@ class SongCanvasContent extends StatelessWidget {
   final String albumArtist;
   final double playerRatio;
   final double lastPlayerRatio;
-  final Function togglePause;
+  final Function onInteraction;
   final bool paused;
+  final bool likedCurrentSong;
   final Size navBarSize;
 
   SongCanvasContent(this.canvasUrl, this.albumArtUrl, this.songName,
       this.albumArtist, this.lastPlayerRatio, this.playerRatio,
-      this.togglePause, this.paused, this.navBarSize);
-
-  Widget get middleSection => Expanded(
-    child: Row(
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        SongDescription(this.albumArtUrl, this.songName, this.albumArtist),
-        ActionsToolbar()]
-    ),
-  );
+      this.onInteraction, this.paused, this.likedCurrentSong, this.navBarSize);
 
   Widget _getGradient() {
     return Container(
@@ -96,14 +88,15 @@ class SongCanvasContent extends StatelessWidget {
               Container(height: this.navBarSize.height,)
             ]),
         GestureDetector(
-            onTap: () => this.togglePause(true),
+            onTap: (){this.onInteraction(Interaction.PAUSE, byUser: true);},
+            onDoubleTap: (){this.onInteraction(Interaction.LIKE);},
             child: _getPauseOverlay(context)),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
               alignment: Alignment.bottomRight,
-                child: ActionsToolbar()
+                child: ActionsToolbar(this.onInteraction, this.likedCurrentSong)
             ),
             ContentProgressIndicator(this.lastPlayerRatio, this.playerRatio),
             Container(height: this.navBarSize.height,)

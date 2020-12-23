@@ -20,7 +20,9 @@ class Discover extends StatefulWidget {
   DiscoverState createState() => DiscoverState();
 }
 
-enum PlayerState { stopped, playing, paused }
+enum PlayerState { STOPPED, PLAYING, PAUSED }
+
+enum Interaction { REFRESH, LOAD_MORE, CHANGE_PAGE, PAUSE, LIKE, UNLIKE, OPEN_SPOTIFY, SHARE, MORE_OPTIONS }
 
 class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
 
@@ -34,6 +36,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
   List<Song> _songs;
   int _currentIdx = 0;
   bool _fetchingSongs = false;
+  bool _likedCurrentSong = false;
   final GlobalKey<ContentManagerState> _contentManagerState = GlobalKey<ContentManagerState>();
 
   @override
@@ -101,6 +104,52 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
     }
   }
 
+  dynamic _interactionHandler(Interaction interaction, {byUser: true, int idx}) {
+    dynamic response;
+    switch (interaction) {
+      case Interaction.PAUSE:
+        _togglePause(byUser);
+        break;
+      case Interaction.CHANGE_PAGE:
+        _onPageChanged(idx);
+        break;
+      case Interaction.LOAD_MORE:
+        response = _onLoadMore();
+        break;
+      case Interaction.REFRESH:
+        _onRefresh();
+        break;
+      case Interaction.LIKE:
+        _like();
+        break;
+      case Interaction.UNLIKE:
+        _unlike();
+        break;
+      case Interaction.MORE_OPTIONS:
+        // TODO
+        break;
+      case Interaction.OPEN_SPOTIFY:
+        // TODO
+       break;
+      case Interaction.SHARE:
+        // TODO
+        break;
+    }
+    return response;
+  }
+
+  void _like() {
+    setState(() {
+      _likedCurrentSong = true;
+    });
+  }
+
+  void _unlike() {
+    setState(() {
+      _likedCurrentSong = false;
+    });
+  }
+
   Future<List<Song>> _onRefresh() async {
     print("Discover onRefresh");
     if(!_fetchingSongs) {
@@ -157,9 +206,16 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
     } else if(!_paused && widget.discoverStatus == PageStatus.inactive) {
       _togglePause(false);
     }
-    return ContentManager(_songs, _lastPlayerRatio, _playerRatio,
-        _musicPlayer.currentUrl, _togglePause, _onPageChanged, _onRefresh,
-        _onLoadMore, _paused, widget.navBarSize, key: _contentManagerState);
+      return ContentManager(
+          _songs,
+          _lastPlayerRatio,
+          _playerRatio,
+          _musicPlayer.currentUrl,
+          _interactionHandler,
+          _paused,
+          _likedCurrentSong,
+          widget.navBarSize,
+          key: _contentManagerState);
   }
 
   @override

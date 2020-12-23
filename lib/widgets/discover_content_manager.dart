@@ -6,22 +6,22 @@ import 'package:flutter/material.dart';
 import 'discover_content/song_canvas_content.dart';
 import 'discover_content/song_static_content.dart';
 
+import 'package:music_app/discover.dart';
+
 class ContentManager extends StatefulWidget {
   final List<Song> initialSongs;
 
   final double lastPlayerRatio;
   final double playerRatio;
   final String playingUrl;
-  final Function togglePause;
-  final Function onPageChanged;
-  final Function onRefresh;
-  final Function onLoadMore;
+  final Function onInteraction;
   final bool paused;
+  final bool likedCurrentSong;
   final Size navBarSize;
 
   ContentManager(this.initialSongs, this.lastPlayerRatio, this.playerRatio,
-      this.playingUrl, this.togglePause, this.onPageChanged, this.onRefresh,
-      this.onLoadMore, this.paused, this.navBarSize, {Key key}) : super(key: key);
+  this.playingUrl, this.onInteraction, this.paused, this.likedCurrentSong,
+  this.navBarSize, {Key key}) : super(key: key);
 
   @override
   ContentManagerState createState() => ContentManagerState();
@@ -67,18 +67,18 @@ class ContentManagerState extends State<ContentManager> {
       }
       if(song.canvasUrl != null && song.canvasUrl != "") {
         return SongCanvasContent(song.canvasUrl, song.albumArtUrl, song.title,
-            albumArtist, lastPlayerRatio, playerRatio, widget.togglePause,
-            widget.paused, widget.navBarSize);
+            albumArtist, lastPlayerRatio, playerRatio, widget.onInteraction,
+            widget.paused, widget.likedCurrentSong, widget.navBarSize);
       } else {
         return SongStaticContent(song.albumArtUrl, song.title, albumArtist,
-            lastPlayerRatio, playerRatio, widget.togglePause, widget.paused,
-            widget.navBarSize);
+            lastPlayerRatio, playerRatio, widget.onInteraction, widget.paused,
+            widget.likedCurrentSong, widget.navBarSize);
       }
     });
   }
 
   void _onRefresh() async {
-    List<Song> songs = await widget.onRefresh();
+    List<Song> songs = await widget.onInteraction(Interaction.REFRESH);
     setState(() {
       _songs = songs;
     });
@@ -88,7 +88,7 @@ class ContentManagerState extends State<ContentManager> {
   void _onLoadMore() async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     if(timestamp >= loadMoreTime) {
-      Map<String, dynamic> response = await widget.onLoadMore();
+      Map<String, dynamic> response = await widget.onInteraction(Interaction.LOAD_MORE);
       setState(() {
         _songs = response["songs"];
         _currentIdx = response["currentIdx"];
@@ -114,11 +114,11 @@ class ContentManagerState extends State<ContentManager> {
     setState(() {
       _currentIdx = idx;
     });
-    widget.onPageChanged(idx);
+    widget.onInteraction(Interaction.CHANGE_PAGE, idx: idx);
     //Fetch more songs if there are only a few left in the buffer
     if (_currentIdx >= (_songs.length - preloadBuffer)) {
       print("Fetching more songs to keep buffer...");
-      Map<String, dynamic> response = await widget.onLoadMore();
+      Map<String, dynamic> response = await widget.onInteraction(Interaction.LOAD_MORE);
       setState(() {
         _songs = response["songs"];
         _currentIdx = response["currentIdx"] - 1;

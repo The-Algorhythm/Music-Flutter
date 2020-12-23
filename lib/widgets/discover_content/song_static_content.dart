@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:music_app/discover.dart';
 import 'package:music_app/widgets/discover_content/actions_toolbar.dart';
 import 'package:music_app/widgets/discover_content/progress_indicator.dart';
 
@@ -10,13 +11,14 @@ class SongStaticContent extends StatelessWidget {
   final String albumArtist;
   final double playerRatio;
   final double lastPlayerRatio;
-  final Function togglePause;
+  final Function onInteraction;
   final bool paused;
+  final bool likedCurrentSong;
   final Size navBarSize;
 
   SongStaticContent(this.albumArtUrl, this.songName, this.albumArtist,
-      this.lastPlayerRatio, this.playerRatio, this.togglePause, this.paused,
-      this.navBarSize);
+      this.lastPlayerRatio, this.playerRatio, this.onInteraction, this.paused,
+      this.likedCurrentSong, this.navBarSize);
   static MediaQueryData queryData;
 
   Widget _getVerticalGradient() {
@@ -143,7 +145,8 @@ class SongStaticContent extends StatelessWidget {
         _getMainSection(context),
         _getHorizontalGradient(),
         GestureDetector(
-            onTap: () => this.togglePause(true),
+            onTap: (){this.onInteraction(Interaction.PAUSE, byUser: true);},
+            onDoubleTap: (){this.onInteraction(Interaction.LIKE);},
             child: _getPauseOverlay(context)),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -151,7 +154,7 @@ class SongStaticContent extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: ActionsToolbar(),
+              child: ActionsToolbar(this.onInteraction, this.likedCurrentSong),
             ),
             ContentProgressIndicator(this.lastPlayerRatio, this.playerRatio),
             Container(height: this.navBarSize.height,),
