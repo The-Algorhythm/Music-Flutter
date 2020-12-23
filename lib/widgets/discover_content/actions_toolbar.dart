@@ -54,7 +54,7 @@ class ActionsToolbarState extends State<ActionsToolbar> {
       likeBuilder: (bool isLiked) {
         return Icon(
           icon,
-          color: isLiked ? Colors.red : Colors.white,
+          color: isLiked ? Color(0xFFc77dff) : Colors.white,
           size: iconSize,
         );
       },

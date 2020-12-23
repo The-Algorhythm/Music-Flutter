@@ -23,8 +23,6 @@ class PostOverlayState extends State<PostOverlay> with TickerProviderStateMixin 
   Animation<double> _fadeInFadeOut;
   Animation<double> _growShrink;
 
-  Offset _likePosition = new Offset(0, 0);
-
   @override
   void initState() {
     super.initState();
@@ -53,10 +51,7 @@ class PostOverlayState extends State<PostOverlay> with TickerProviderStateMixin 
     );
   }
 
-  void like(Offset tapPosition) {
-    setState(() {
-      _likePosition = tapPosition;
-    });
+  void like() {
     animation.forward();
   }
 
@@ -69,19 +64,14 @@ class PostOverlayState extends State<PostOverlay> with TickerProviderStateMixin 
     return positive ? randInt : 0 - randInt;
   }
 
-  Widget _getLikeOverlay(context, likePosition) {
+  Widget _getLikeOverlay(context) {
     double iconSize = 75;
-    return Positioned(
-      top: likePosition.dy - iconSize/2,
-      left: likePosition.dx - iconSize/2,
-      child: Transform(
-        transform: Matrix4.rotationZ(math.radians(_randPosNeg(30).toDouble())),
-        child: FadeTransition(
-          opacity: _fadeInFadeOut,
-          child: ScaleTransition(
-            scale: _growShrink,
-            child: Icon(MusicAppIcons.heart, size: iconSize, color: Colors.red),
-          ),
+    return Center(
+      child: FadeTransition(
+        opacity: _fadeInFadeOut,
+        child: ScaleTransition(
+          scale: _growShrink,
+          child: Icon(MusicAppIcons.heart, size: iconSize, color: Color(0xFFc77dff)),
         ),
       ),
     );
@@ -94,7 +84,7 @@ class PostOverlayState extends State<PostOverlay> with TickerProviderStateMixin 
         return _getPauseOverlay(context);
         break;
       case OverlayType.LIKE:
-        return _getLikeOverlay(context, _likePosition);
+        return _getLikeOverlay(context);
         break;
     }
   }

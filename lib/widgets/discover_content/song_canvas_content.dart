@@ -33,7 +33,6 @@ class _SongCanvasContentState extends State<SongCanvasContent> {
   final GlobalKey<PostOverlayState> _likeOverlayState = GlobalKey<PostOverlayState>();
   final GlobalKey<ActionsToolbarState> _actionsToolbarState = GlobalKey<ActionsToolbarState>();
   Widget _likeOverlay;
-  Offset _lastDoubletapPosition;
 
   @override
   void initState() {
@@ -75,13 +74,6 @@ class _SongCanvasContentState extends State<SongCanvasContent> {
     }
   }
 
-  void _handleDoubleTapDown(TapDownDetails details) {
-    final RenderBox referenceBox = context.findRenderObject();
-    setState(() {
-      _lastDoubletapPosition = referenceBox.globalToLocal(details.globalPosition);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     queryData = MediaQuery.of(context);
@@ -97,10 +89,9 @@ class _SongCanvasContentState extends State<SongCanvasContent> {
             ]),
         GestureDetector(
             onTap: (){widget.onInteraction(Interaction.PAUSE, byUser: true);},
-            onDoubleTapDown: _handleDoubleTapDown,
             onDoubleTap: () {
               _actionsToolbarState.currentState.externalLike();
-              _likeOverlayState.currentState.like(_lastDoubletapPosition);
+              _likeOverlayState.currentState.like();
               widget.onInteraction(Interaction.LIKE);
               },
             child: Stack(
