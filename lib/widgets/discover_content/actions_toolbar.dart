@@ -64,10 +64,17 @@ class ActionsToolbarState extends State<ActionsToolbar> {
   }
 
   Future<bool> _onLikeButtonTapped(bool isLiked) async {
-    _likedCurrentSong ? widget.onInteraction(Interaction.UNLIKE): widget.onInteraction(Interaction.LIKE);
-    setState(() {
-      _likedCurrentSong = !_likedCurrentSong;
-    });
+    bool success;
+    if(_likedCurrentSong) {
+      success = await widget.onInteraction(Interaction.UNLIKE);
+    } else {
+      success = await widget.onInteraction(Interaction.LIKE);
+    }
+    if(success) {
+      setState(() {
+        _likedCurrentSong = !_likedCurrentSong;
+      });
+    }
     return _likedCurrentSong;
   }
 

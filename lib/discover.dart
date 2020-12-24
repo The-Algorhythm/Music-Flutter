@@ -104,7 +104,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  dynamic _interactionHandler(Interaction interaction, {byUser: true, int idx}) {
+  dynamic _interactionHandler(Interaction interaction, {byUser: true, int idx}) async {
     dynamic response;
     switch (interaction) {
       case Interaction.PAUSE:
@@ -120,10 +120,10 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
         _onRefresh();
         break;
       case Interaction.LIKE:
-        _like();
+        response = _like();
         break;
       case Interaction.UNLIKE:
-        _unlike();
+        response = _unlike();
         break;
       case Interaction.MORE_OPTIONS:
         // TODO
@@ -138,18 +138,32 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
     return response;
   }
 
-  void _like() {
-    print("Liked song");
-    setState(() {
-      _likedCurrentSong = true;
-    });
+  Future<bool> _like() async {
+    if(!_likedCurrentSong) {
+      print("Liked song");
+      bool success = await interact(_songs[_currentIdx], "like");
+      if(success) {
+        setState(() {
+          _likedCurrentSong = true;
+        });
+      }
+      return success;
+    }
+    return false;
   }
 
-  void _unlike() {
-    print("Unliked song");
-    setState(() {
-      _likedCurrentSong = false;
-    });
+  Future<bool> _unlike() async {
+    if(_likedCurrentSong) {
+      print("Unliked song");
+      bool success = await interact(_songs[_currentIdx], "unlike");
+      if(success) {
+        setState(() {
+          _likedCurrentSong = false;
+        });
+      }
+      return success;
+    }
+    return false;
   }
 
   Future<List<Song>> _onRefresh() async {

@@ -148,11 +148,13 @@ class _SongStaticContentState extends State<SongStaticContent> {
         _getHorizontalGradient(),
         GestureDetector(
             onTap: (){widget.onInteraction(Interaction.PAUSE, byUser: true);},
-            onDoubleTap: (){
-              _actionsToolbarState.currentState.externalLike();
+            onDoubleTap: () async {
               _likeOverlayState.currentState.like();
-              widget.onInteraction(Interaction.LIKE);
-              },
+              bool success = await widget.onInteraction(Interaction.LIKE);
+              if(success) {
+                _actionsToolbarState.currentState.externalLike();
+              }
+            },
             child: Stack(
               children: [
                 PostOverlay(OverlayType.PAUSE, isPaused: widget.paused),

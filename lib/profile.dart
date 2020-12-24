@@ -12,7 +12,7 @@ class ProfilePage extends StatelessWidget {
   final Function clearOverlayCallback;
 
   static const String albumArtUrl = "https://i.scdn.co/image/ab67616d00001e02323b486defbe382273719626";
-  List<String> imagedatamodel = List.generate(100, (index) {
+  List<String> likedSongs = List.generate(100, (index) {
     return albumArtUrl;
   });
 
@@ -87,13 +87,13 @@ class ProfilePage extends StatelessWidget {
       width: 50,
       height: 50,
       child: GestureDetector(
-          onTap: (){_heartPressed(index);},
+          onTap: (){_likedSongPressed(index);},
           child:Image.network(albumArtUrl))
     );
   }
 
-  void _heartPressed(idx) {
-    overlayCallback(LikedSongsOverlay(idx, imagedatamodel, clearOverlayCallback));
+  void _likedSongPressed(idx) {
+    overlayCallback(LikedSongsOverlay(idx, likedSongs, clearOverlayCallback));
   }
 
   @override

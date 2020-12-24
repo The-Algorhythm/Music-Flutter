@@ -24,6 +24,11 @@ class Song {
       uri: json['uri'] as String,
     );
   }
+
+  /// Returns the song id without the preceding "spotify:track:"
+  String songId() {
+    return this.uri.substring("spotify:track:".length);
+  }
 }
 
 List<Song> parseSongs(String responseBody) {
