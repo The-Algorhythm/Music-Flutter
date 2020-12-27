@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:music_app/app_icons.dart';
+import 'package:music_app/model/song.dart';
 
 class LikedSongsOverlay extends StatefulWidget {
-  List<String> imagedatamodel;
+  List<Song> likedSongs;
   final Function clearOverlayCallback;
   final int initialIndex;
-  LikedSongsOverlay(this.initialIndex, this.imagedatamodel, this.clearOverlayCallback);
+  LikedSongsOverlay(this.initialIndex, this.likedSongs, this.clearOverlayCallback);
 
   @override
   _LikedSongsOverlayState createState() => _LikedSongsOverlayState();
@@ -15,28 +17,29 @@ class LikedSongsOverlay extends StatefulWidget {
 class _LikedSongsOverlayState extends State<LikedSongsOverlay> {
   static MediaQueryData queryData;
   int _index;
+  List<int> _unlikedSongIdxs;
 
   @override
   void initState() {
     super.initState();
     _index = widget.initialIndex;
+    _unlikedSongIdxs = new List();
   }
-
-  static const String albumArtUrl = "https://i.scdn.co/image/ab67616d00001e02323b486defbe382273719626";
 
   Widget _swiper(context) {
     return Container(
-        height: 275,
+        height: 265,
         width: queryData.size.width,
         child: new Swiper(
           index: _index,
           itemBuilder: (BuildContext context, int index) {
             return new Image.network(
-              widget.imagedatamodel[index],
+              widget.likedSongs[index].albumArtUrl,
               fit: BoxFit.fill,
             );
           },
-          itemCount: widget.imagedatamodel.length,
+          loop: false,
+          itemCount: widget.likedSongs.length,
           viewportFraction: 0.7,
           scale: 0.9,
           onIndexChanged: (index){
@@ -48,9 +51,75 @@ class _LikedSongsOverlayState extends State<LikedSongsOverlay> {
       );
   }
 
+  Widget _getButtons(context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 40),
+      child: Wrap(
+        spacing: 10,
+        children: [
+          IconButton(
+            iconSize: 50,
+            icon: Icon(MusicAppIcons.heart,
+                color: _unlikedSongIdxs.contains(_index) ? Colors.white : Color(0xFFc77dff)),
+            onPressed: (){_heartPressed();},
+          ),
+          IconButton(
+            iconSize: 50,
+            icon: Icon(MusicAppIcons.spotify, color: Colors.white),
+            onPressed: (){
+              //TODO add when "open in spotify" functionality is implemented
+            },
+          ),
+          IconButton(
+            iconSize: 50,
+            icon: Icon(MusicAppIcons.share, color: Colors.white),
+            onPressed: (){
+              //TODO add when share functionality is implemented
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _heartPressed() {
+    if(_unlikedSongIdxs.contains(_index)) {
+      // we have already unliked it, so relike it
+      setState(() {
+        _unlikedSongIdxs.remove(_index);
+      });
+    } else {
+      // We have liked it, so add it to the unliked songs list
+      setState(() {
+        _unlikedSongIdxs.add(_index);
+      });
+    }
+  }
+
+  Widget _getGradient() {
+    return Container(
+        height: queryData.size.height*0.3,
+        decoration: BoxDecoration(
+        color: Colors.white,
+        gradient: LinearGradient(
+          begin: FractionalOffset.topCenter,
+          end: FractionalOffset.bottomCenter,
+          colors: [
+            Colors.black.withOpacity(0.0),
+            Colors.black.withOpacity(0.6),
+          ],
+          stops: [
+            0.0,
+            1.0
+          ])
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     queryData = MediaQuery.of(context);
+    Song song = widget.likedSongs[_index];
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -70,25 +139,48 @@ class _LikedSongsOverlayState extends State<LikedSongsOverlay> {
                       alignment: Alignment.topLeft,
                       child: IconButton(
                         icon: new Icon(Icons.close, color: Colors.white, size: 35),
-                        onPressed: (){widget.clearOverlayCallback();},
+                        onPressed: (){widget.clearOverlayCallback(_unlikedSongIdxs);},
                       )),
                 ),
-                Column(
-                    children: <Widget>[
-                      Container(
-                        height: queryData.size.height - (65 + queryData.viewPadding.top),
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.all(25.00),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            _swiper(context),
-                            Text("$_index")
-                          ],
-                        ),
+                Stack(
+                  children: [
+                    Container(
+                      height: queryData.size.height - (65 + queryData.viewPadding.top),
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.all(25.00),
+                      child: Column(
+                        children: [
+                          Container(height: queryData.size.height*0.1,),
+                          _swiper(context),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 10),
+                            child: Text(song.title,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 20),),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15, right: 15),
+                            child: Text(song.album + " - " + song.artist,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 18),),
+                          ),
+                        ],
                       ),
-                    ]),
+                    ),
+                    Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: _getGradient(),
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: _getButtons(context),
+                      ),
+                    )
+                  ],
+                ),
               ],
             ),
         ),

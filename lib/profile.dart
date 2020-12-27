@@ -4,19 +4,77 @@ import 'package:music_app/settings.dart';
 import 'package:music_app/app_icons.dart';
 import 'package:music_app/widgets/liked_songs_overlay.dart';
 
-class ProfilePage extends StatelessWidget {
+import 'middleware.dart';
+import 'model/song.dart';
 
-  static MediaQueryData queryData;
-  SpotifyProfile profile;
+class ProfilePage extends StatefulWidget {
   final Function overlayCallback;
   final Function clearOverlayCallback;
 
-  static const String albumArtUrl = "https://i.scdn.co/image/ab67616d00001e02323b486defbe382273719626";
-  List<String> likedSongs = List.generate(100, (index) {
-    return albumArtUrl;
-  });
-
   ProfilePage(this.overlayCallback, this.clearOverlayCallback);
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+
+  static MediaQueryData queryData;
+  SpotifyProfile profile;
+
+  static const String albumArtUrl = "https://i.scdn.co/image/ab67616d00001e02323b486defbe382273719626";
+  List<Song> _likedSongs;
+  bool _loading = true;
+
+
+  @override
+  void initState() {
+    _fetchLikedSongs();
+  }
+
+  void _fetchLikedSongs() async {
+    List<Song> res = await getLikedSongs();
+    setState(() {
+      _likedSongs = res;
+      _loading = false;
+    });
+  }
+
+  Widget _likedSongsSection(ctx) {
+    if(_loading) {
+      return Column(
+        children: [
+          Container(height: MediaQuery.of(ctx).size.height/6,),
+          CircularProgressIndicator(
+            strokeWidth: 5,
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFC77DFF)),
+          ),
+        ],
+      );
+    } else {
+      if(_likedSongs.length == 0) {
+        return Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Text("You haven't liked any songs yet. When you do, you can review them here.",
+            style: TextStyle(fontSize: 16),
+            textAlign: TextAlign.center),
+        );
+      } else {
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(right: 8, left: 8),
+            child: GridView.count(
+              crossAxisCount: 4,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              children: List.generate(_likedSongs.length, (index) {
+                return _getChild(index);
+              }),
+            ),
+          ),
+        );
+      }
+    }
+  }
 
   Widget _topSection(ctx) {
     return Container(
@@ -88,12 +146,27 @@ class ProfilePage extends StatelessWidget {
       height: 50,
       child: GestureDetector(
           onTap: (){_likedSongPressed(index);},
-          child:Image.network(albumArtUrl))
+          child:Image.network(_likedSongs[index].albumArtUrl))
     );
   }
 
   void _likedSongPressed(idx) {
-    overlayCallback(LikedSongsOverlay(idx, likedSongs, clearOverlayCallback));
+    widget.overlayCallback(LikedSongsOverlay(idx, _likedSongs, _clearOverlayWrapper));
+  }
+
+  void _clearOverlayWrapper(List<int> unlikedSongIdx) async {
+    widget.clearOverlayCallback();
+    setState(() {
+      _loading = true;
+    });
+    for(final idx in unlikedSongIdx) {
+      bool success = await interact(_likedSongs[idx], "unlike");
+    }
+    List<Song> newSongs = await getLikedSongs();
+    setState(() {
+      _likedSongs = newSongs;
+      _loading = false;
+    });
   }
 
   @override
@@ -117,19 +190,7 @@ class ProfilePage extends StatelessWidget {
                           style: new TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     )
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8, left: 8),
-                    child: GridView.count(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      children: List.generate(100, (index) {
-                        return _getChild(index);
-                      }),
-                    ),
-                  ),
-                ),
+                _likedSongsSection(ctx)
               ],
             ),
           ),

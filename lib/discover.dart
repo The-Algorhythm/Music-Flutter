@@ -69,6 +69,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
   void _onPageChanged(int idx) async {
     setState(() {
       _paused = false;
+      _likedCurrentSong = false;
       _currentIdx = idx;
     });
     await _musicPlayer.stop();
@@ -215,6 +216,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
+    // TODO keep track of session's liked songs
     super.build(context);
     if(_paused && !_userPaused && widget.discoverStatus == PageStatus.returning) {
       _togglePause(false);

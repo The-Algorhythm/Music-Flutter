@@ -31,8 +31,8 @@ class Song {
   }
 }
 
-List<Song> parseSongs(String responseBody) {
-  final parsed = jsonDecode(responseBody)["recommendations"].cast<Map<String, dynamic>>();
+List<Song> parseSongs(String responseBody, String dataName) {
+  final parsed = jsonDecode(responseBody)[dataName].cast<Map<String, dynamic>>();
 
   return parsed.map<Song>((json) => Song.fromJson(json)).toList();
 }

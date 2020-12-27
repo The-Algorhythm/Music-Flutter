@@ -18,7 +18,7 @@ Future<List<Song>> getRecommendations({int numSongs = 100,
   });
   final headers = {"token": jsonEncode(profile.tokenInfo)};
   final response = await http.get(uri, headers: headers);
-  return parseSongs(response.body);
+  return parseSongs(response.body, "recommendations");
 }
 
 Future<bool> interact(Song song, String type, {int listenLength}) async {
@@ -41,5 +41,5 @@ Future<List<Song>> getLikedSongs() async {
   var uri = Uri.http(baseUrl, '/liked');
   final headers = {"token": jsonEncode(profile.tokenInfo)};
   final response = await http.get(uri, headers: headers);
-  return parseSongs(response.body);
+  return parseSongs(response.body, "tracks");
 }
