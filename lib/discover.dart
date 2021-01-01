@@ -37,6 +37,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
   int _currentIdx = 0;
   bool _fetchingSongs = false;
   bool _likedCurrentSong = false;
+  List<int> _likedSongs;
   final GlobalKey<ContentManagerState> _contentManagerState = GlobalKey<ContentManagerState>();
 
   @override
@@ -44,6 +45,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
     super.initState();
     setState(() {
       _songs = widget.initialSongs;
+      _likedSongs = List();
     });
     _musicPlayer = MusicPlayer(_songs[0].previewUrl, _onAudioPositionChanged);
     _musicPlayer.initAudioPlayer();
@@ -69,8 +71,8 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
   void _onPageChanged(int idx) async {
     setState(() {
       _paused = false;
-      _likedCurrentSong = false;
       _currentIdx = idx;
+      _likedCurrentSong = _likedSongs.contains(idx);
     });
     await _musicPlayer.stop();
     _playerRatio = 0.0;
@@ -146,6 +148,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
       if(success) {
         setState(() {
           _likedCurrentSong = true;
+          _likedSongs.add(_currentIdx);
         });
       }
       return success;
@@ -160,6 +163,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
       if(success) {
         setState(() {
           _likedCurrentSong = false;
+          _likedSongs.remove(_currentIdx);
         });
       }
       return success;
@@ -231,7 +235,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
           _musicPlayer.currentUrl,
           _interactionHandler,
           _paused,
-          _likedCurrentSong,
+          _likedCurrentSong,  //TODO debug why things get out of sync when liking songs and scrolling
           widget.navBarSize,
           key: _contentManagerState);
   }
