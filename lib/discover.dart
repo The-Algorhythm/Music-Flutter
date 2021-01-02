@@ -12,9 +12,10 @@ import 'model/song.dart';
 class Discover extends StatefulWidget {
   PageStatus discoverStatus;
   final List<Song> initialSongs;
+  final List<Song> initialLikedSongs;
   final Size navBarSize;
 
-  Discover(this.initialSongs, this.discoverStatus, this.navBarSize, {Key key}) : super(key: key);
+  Discover(this.initialSongs, this.initialLikedSongs, this.discoverStatus, this.navBarSize, {Key key}) : super(key: key);
 
   @override
   DiscoverState createState() => DiscoverState();
@@ -37,7 +38,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
   int _currentIdx = 0;
   bool _fetchingSongs = false;
   bool _likedCurrentSong = false;
-  List<int> _likedSongs;
+  List<Song> _likedSongs;
   final GlobalKey<ContentManagerState> _contentManagerState = GlobalKey<ContentManagerState>();
 
   @override
@@ -45,7 +46,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
     super.initState();
     setState(() {
       _songs = widget.initialSongs;
-      _likedSongs = List();
+      _likedSongs = widget.initialLikedSongs;
     });
     _musicPlayer = MusicPlayer(_songs[0].previewUrl, _onAudioPositionChanged);
     _musicPlayer.initAudioPlayer();
@@ -70,7 +71,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
 
   void _onPageChanged(int idx) async {
     setState(() {
-      _likedCurrentSong = _likedSongs.contains(idx);
+      _likedCurrentSong = _likedSongs.contains(_songs[idx]);
       _paused = false;
       _currentIdx = idx;
     });
@@ -148,7 +149,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
       if(success) {
         setState(() {
           _likedCurrentSong = true;
-          _likedSongs.add(_currentIdx);
+          _likedSongs.add(_songs[_currentIdx]);
         });
       }
       return success;
@@ -163,7 +164,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
       if(success) {
         setState(() {
           _likedCurrentSong = false;
-          _likedSongs.remove(_currentIdx);
+          _likedSongs.remove(_songs[_currentIdx]);
         });
       }
       return success;

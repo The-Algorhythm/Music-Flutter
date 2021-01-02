@@ -8,8 +8,9 @@ import 'package:music_app/widgets/widget_size.dart';
 
 class PagesHolder extends StatefulWidget {
   final initialSongs;
+  final initialLikedSongs;
 
-  PagesHolder(this.initialSongs);
+  PagesHolder(this.initialSongs, this.initialLikedSongs);
 
   @override
   _PagesHolderState createState() => _PagesHolderState();
@@ -73,7 +74,7 @@ class _PagesHolderState extends State<PagesHolder> {
   @override
   Widget build(BuildContext context) {
     _screens = [
-      Discover(widget.initialSongs, _discoverStatus, _navBarSize, key: _discoverState),
+      Discover(widget.initialSongs, widget.initialLikedSongs, _discoverStatus, _navBarSize, key: _discoverState),
       ProfilePage(setOverlay, clearOverlay)];
     if(_discoverStatus == PageStatus.returning) {
       // if we are returning, change to active so we are only returning once

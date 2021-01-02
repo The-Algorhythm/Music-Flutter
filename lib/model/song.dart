@@ -29,6 +29,14 @@ class Song {
   String songId() {
     return this.uri.substring("spotify:track:".length);
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is Song && other.uri == this.uri;
+  }
+
+  @override
+  int get hashCode => uri.hashCode;
 }
 
 List<Song> parseSongs(String responseBody, String dataName) {
