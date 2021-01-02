@@ -120,7 +120,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
         response = _onLoadMore();
         break;
       case Interaction.REFRESH:
-        _onRefresh();
+        response = _onRefresh();
         break;
       case Interaction.LIKE:
         response = _like();
