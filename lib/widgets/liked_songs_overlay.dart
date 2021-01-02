@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:music_app/app_icons.dart';
+import 'package:music_app/middleware.dart';
 import 'package:music_app/model/song.dart';
 
 class LikedSongsOverlay extends StatefulWidget {
@@ -82,17 +83,27 @@ class _LikedSongsOverlayState extends State<LikedSongsOverlay> {
     );
   }
 
-  void _heartPressed() {
+  void _heartPressed() async {
     if(_unlikedSongIdxs.contains(_index)) {
       // we have already unliked it, so relike it
-      setState(() {
-        _unlikedSongIdxs.remove(_index);
-      });
+      bool success = await interact(widget.likedSongs[_index], "like");
+      if(success) {
+        setState(() {
+          _unlikedSongIdxs.remove(_index);
+        });
+      } else {
+        print("ERROR: could not like song");
+      }
     } else {
       // We have liked it, so add it to the unliked songs list
-      setState(() {
-        _unlikedSongIdxs.add(_index);
-      });
+      bool success = await interact(widget.likedSongs[_index], "unlike");
+      if(success) {
+        setState(() {
+          _unlikedSongIdxs.add(_index);
+        });
+      } else {
+        print("ERROR: could not unlike song");
+      }
     }
   }
 

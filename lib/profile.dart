@@ -165,16 +165,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _clearOverlayWrapper(List<int> unlikedSongIdx) async {
     widget.clearOverlayCallback();
-    setState(() {
-      _loading = true;
-    });
-    for(final idx in unlikedSongIdx) {
-      bool success = await interact(_likedSongs[idx], "unlike");
+    var temp = new List.from(_likedSongs);
+    for(var i = unlikedSongIdx.length - 1; i >= 0; i--) {
+      var idx = unlikedSongIdx[i];
+      temp.removeAt(idx);
     }
-    List<Song> newSongs = await getLikedSongs();
     setState(() {
-      _likedSongs = newSongs;
-      _loading = false;
+      _likedSongs = new List.from(temp);
     });
   }
 
