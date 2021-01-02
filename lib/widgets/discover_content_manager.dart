@@ -61,6 +61,7 @@ class ContentManagerState extends State<ContentManager> {
       String albumArtist = song.album + " - " + song.artist;
       double lastPlayerRatio = widget.lastPlayerRatio;
       double playerRatio = widget.playerRatio;
+      bool likedSong = (_currentIdx == i) && (widget.likedCurrentSong);
       if(widget.playingUrl != song.previewUrl) {
         lastPlayerRatio = 0.0;
         playerRatio = 0.0;
@@ -68,11 +69,11 @@ class ContentManagerState extends State<ContentManager> {
       if(song.canvasUrl != null && song.canvasUrl != "") {
         return SongCanvasContent(song.canvasUrl, song.albumArtUrl, song.title,
             albumArtist, lastPlayerRatio, playerRatio, widget.onInteraction,
-            widget.paused, widget.likedCurrentSong, widget.navBarSize);
+            widget.paused, likedSong, widget.navBarSize);
       } else {
         return SongStaticContent(song.albumArtUrl, song.title, albumArtist,
             lastPlayerRatio, playerRatio, widget.onInteraction, widget.paused,
-            widget.likedCurrentSong, widget.navBarSize);
+            likedSong, widget.navBarSize);
       }
     });
   }

@@ -16,13 +16,7 @@ class ActionsToolbarState extends State<ActionsToolbar> {
 
   static const double iconContainerSize = 60.0;
   static const double iconSize = 35.0;
-  bool _likedCurrentSong;
   final GlobalKey<LikeButtonState> _likeButtonState = GlobalKey<LikeButtonState>();
-
-  @override
-  void initState() {
-    _likedCurrentSong = widget.likedCurrentSong;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,35 +48,35 @@ class ActionsToolbarState extends State<ActionsToolbar> {
       likeBuilder: (bool isLiked) {
         return Icon(
           icon,
-          color: isLiked ? Color(0xFFc77dff) : Colors.white,
+          color: widget.likedCurrentSong ? Color(0xFFc77dff) : Colors.white,
           size: iconSize,
         );
       },
       onTap: _onLikeButtonTapped,
-      isLiked: _likedCurrentSong,
+      isLiked: widget.likedCurrentSong,
     );
   }
 
   Future<bool> _onLikeButtonTapped(bool isLiked) async {
     bool success;
-    if(_likedCurrentSong) {
+    if(widget.likedCurrentSong) {
       success = await widget.onInteraction(Interaction.UNLIKE);
     } else {
       success = await widget.onInteraction(Interaction.LIKE);
     }
     if(success) {
       setState(() {
-        _likedCurrentSong = !_likedCurrentSong;
+        widget.likedCurrentSong = !widget.likedCurrentSong;
       });
     }
-    return _likedCurrentSong;
+    return widget.likedCurrentSong;
   }
 
   void externalLike() {
-    _likedCurrentSong = false;  // Set it to false initially so it will be set to true when onTap is called
+    widget.likedCurrentSong = false;  // Set it to false initially so it will be set to true when onTap is called
     _likeButtonState.currentState.onTap();
     setState(() {
-      _likedCurrentSong = true;
+      widget.likedCurrentSong = true;
     });
   }
 

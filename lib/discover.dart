@@ -70,9 +70,9 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
 
   void _onPageChanged(int idx) async {
     setState(() {
+      _likedCurrentSong = _likedSongs.contains(idx);
       _paused = false;
       _currentIdx = idx;
-      _likedCurrentSong = _likedSongs.contains(idx);
     });
     await _musicPlayer.stop();
     _playerRatio = 0.0;
@@ -220,7 +220,6 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
-    // TODO keep track of session's liked songs
     super.build(context);
     if(_paused && !_userPaused && widget.discoverStatus == PageStatus.returning) {
       _togglePause(false);
@@ -235,7 +234,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
           _musicPlayer.currentUrl,
           _interactionHandler,
           _paused,
-          _likedCurrentSong,  //TODO debug why things get out of sync when liking songs and scrolling
+          _likedCurrentSong,
           widget.navBarSize,
           key: _contentManagerState);
   }

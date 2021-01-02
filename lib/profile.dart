@@ -41,34 +41,43 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _likedSongsSection(ctx) {
     if(_loading) {
-      return Column(
-        children: [
-          Container(height: MediaQuery.of(ctx).size.height/6,),
-          CircularProgressIndicator(
-            strokeWidth: 5,
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFC77DFF)),
+      return SliverPadding(
+        padding: EdgeInsets.only(top: 40,),
+        sliver: SliverToBoxAdapter(
+          child: Center(
+            child: SizedBox(child: CircularProgressIndicator(
+              strokeWidth: 5,
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFC77DFF)),
+            ),
+                width: 50, height: 50),
           ),
-        ],
+        ),
       );
     } else {
       if(_likedSongs.length == 0) {
-        return Padding(
+        return SliverPadding(
           padding: const EdgeInsets.all(12.0),
-          child: Text("You haven't liked any songs yet. When you do, you can review them here.",
-            style: TextStyle(fontSize: 16),
-            textAlign: TextAlign.center),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                Text("You haven't liked any songs yet. When you do, you can review them here.",
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center),
+              ],
+            ),
+          ),
         );
       } else {
-        return Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(right: 8, left: 8),
-            child: GridView.count(
-              crossAxisCount: 4,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              children: List.generate(_likedSongs.length, (index) {
-                return _getChild(index);
-              }),
+        return SliverPadding(
+          padding: const EdgeInsets.only(bottom: 75),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10),
+            delegate: SliverChildBuilderDelegate(
+                    (ctx, idx) => _getChild(idx),
+                childCount: _likedSongs.length
             ),
           ),
         );
@@ -180,17 +189,24 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           _topSection(ctx),
           Expanded(
-            child: Column(
-              children: [
-                Container(
-                    alignment: Alignment.topLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 25, top: 25, bottom: 10),
-                      child: Text("Liked Songs",
-                          style: new TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    )
+            child: CustomScrollView(
+              shrinkWrap: true,
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.only(left: 25, top: 25, bottom: 10),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        Container(
+                            alignment: Alignment.topLeft,
+                            child: Text("Liked Songs",
+                                style: new TextStyle(fontSize: 20, fontWeight: FontWeight.bold))
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                _likedSongsSection(ctx)
+                _likedSongsSection(ctx),
               ],
             ),
           ),
