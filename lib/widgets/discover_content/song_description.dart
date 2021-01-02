@@ -36,11 +36,15 @@ class SongDescription extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 5, right: 65),
                       child: Text(songName,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 4,
                         style: TextStyle(fontSize: songNameFontSize),),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 5, right: 65),
                       child: Text(albumArtist,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 4,
                         style: TextStyle(fontSize: artistAlbumFontSize),),
                     )
                 ]),

@@ -166,12 +166,16 @@ class _LikedSongsOverlayState extends State<LikedSongsOverlay> {
                           Padding(
                             padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 10),
                             child: Text(song.title,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 3,
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 20),),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 15, right: 15),
                             child: Text(song.album + " - " + song.artist,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 4,
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 18),),
                           ),

@@ -121,12 +121,16 @@ class _SongStaticContentState extends State<SongStaticContent> {
         Padding(
           padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
           child: Text(widget.songName,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 7,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 20),),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 15, right: 15),
           child: Text(widget.albumArtist,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 4,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18),),
         ),
