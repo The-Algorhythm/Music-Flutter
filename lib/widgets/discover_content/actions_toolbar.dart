@@ -27,7 +27,7 @@ class ActionsToolbarState extends State<ActionsToolbar> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           _getLike(MusicAppIcons.heart),
-          _getAction(icon: MusicAppIcons.spotify),
+          _getOpenSpotify(MusicAppIcons.spotify),
           _getAction(icon: MusicAppIcons.share),
           _getAction(icon: Icons.more_horiz, size: 40.0),
           Container(height: queryData.size.height / 3.75,),
@@ -78,6 +78,18 @@ class ActionsToolbarState extends State<ActionsToolbar> {
     setState(() {
       widget.likedCurrentSong = true;
     });
+  }
+
+  Widget _getOpenSpotify(IconData icon) {
+    return Container(
+      width: iconContainerSize, height: iconContainerSize,
+      child: IconButton(
+        icon: Icon(icon, size: iconSize, color: Colors.white),
+        onPressed: () async {
+          bool success = await widget.onInteraction(Interaction.OPEN_SPOTIFY);
+        },
+      ),
+    );
   }
 
   Widget _getAction({IconData icon, double size=iconSize, Color color=Colors.white}) {

@@ -39,7 +39,7 @@ class Song {
     return this.uri.substring("spotify:track:".length);
   }
 
-  void openSpotify() async {
+  void openInSpotify() async {
     String url = "https://open.spotify.com/track/" + songId();
 
     if (Platform.isAndroid) {

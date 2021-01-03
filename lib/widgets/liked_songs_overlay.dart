@@ -67,8 +67,9 @@ class _LikedSongsOverlayState extends State<LikedSongsOverlay> {
           IconButton(
             iconSize: 50,
             icon: Icon(MusicAppIcons.spotify, color: Colors.white),
-            onPressed: (){
-              //TODO add when "open in spotify" functionality is implemented
+            onPressed: () async {
+              bool response = await interact(widget.likedSongs[_index], "open");
+              widget.likedSongs[_index].openInSpotify();
             },
           ),
           IconButton(
