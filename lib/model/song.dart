@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:android_intent/android_intent.dart';
 import 'package:flutter_appavailability/flutter_appavailability.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Song {
-
   final String title;
   final String album;
   final String albumArtUrl;
@@ -13,8 +13,14 @@ class Song {
   final String canvasUrl;
   final String uri;
 
-  Song({this.title, this.album, this.albumArtUrl, this.artist, this.previewUrl,
-  this.canvasUrl, this.uri});
+  Song(
+      {this.title,
+      this.album,
+      this.albumArtUrl,
+      this.artist,
+      this.previewUrl,
+      this.canvasUrl,
+      this.uri});
 
   factory Song.fromJson(Map<String, dynamic> json) {
     return Song(
@@ -34,22 +40,21 @@ class Song {
   }
 
   void openSpotify() async {
-    String url = "https://open.spotify.com/track/"+uri;
+    String url = "https://open.spotify.com/track/" + songId();
 
-    if(Platform.isAndroid) {
-      List<Map<String, String>> _installedApps = await AppAvailability.getInstalledApps();
+    if (Platform.isAndroid) {
+      List<Map<String, String>> _installedApps =
+          await AppAvailability.getInstalledApps();
 
-      String packageName;
       bool spotifyInstalled = false;
-      for(var app in _installedApps) {
-        if(app['app_name'] == 'Spotify') {
-          packageName = app['package_name'];
+      for (var app in _installedApps) {
+        if (app['app_name'] == 'Spotify') {
           spotifyInstalled = true;
           break;
         }
       }
 
-      if(!spotifyInstalled) {
+      if (!spotifyInstalled) {
         if (await canLaunch(url)) {
           print("Spotify launched!");
           await launch(url);
@@ -57,13 +62,13 @@ class Song {
           throw 'Could not launch Spotify';
         }
       } else {
-        AppAvailability.launchApp(packageName).then((_) {
-          print("Spotify launched!");
-        }).catchError((err) {
-          print(err);
-        });
+        AndroidIntent intent = AndroidIntent(
+            action: 'action_view',
+            data: uri
+        );
+        await intent.launch();
       }
-    } else if(Platform.isIOS) {
+    } else if (Platform.isIOS) {
       AppAvailability.launchApp(url).then((_) {
         print("Spotify launched!");
       }).catchError((err) {
@@ -82,7 +87,8 @@ class Song {
 }
 
 List<Song> parseSongs(String responseBody, String dataName) {
-  final parsed = jsonDecode(responseBody)[dataName].cast<Map<String, dynamic>>();
+  final parsed =
+      jsonDecode(responseBody)[dataName].cast<Map<String, dynamic>>();
 
   return parsed.map<Song>((json) => Song.fromJson(json)).toList();
 }

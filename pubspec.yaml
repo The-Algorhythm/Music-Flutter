@@ -38,6 +38,7 @@ dependencies:
   vector_math: any
   flutter_appavailability: ^0.0.21
   url_launcher: ^5.7.10
+  android_intent:
 
 dev_dependencies:
   flutter_test:
