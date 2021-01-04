@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:android_intent/android_intent.dart';
 import 'package:flutter_appavailability/flutter_appavailability.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Song {
@@ -11,16 +12,11 @@ class Song {
   final String artist;
   final String previewUrl;
   final String canvasUrl;
+  final String externUrl;
   final String uri;
 
-  Song(
-      {this.title,
-      this.album,
-      this.albumArtUrl,
-      this.artist,
-      this.previewUrl,
-      this.canvasUrl,
-      this.uri});
+  Song({this.title, this.album, this.albumArtUrl, this.artist, this.previewUrl,
+    this.canvasUrl, this.externUrl, this.uri});
 
   factory Song.fromJson(Map<String, dynamic> json) {
     return Song(
@@ -30,6 +26,7 @@ class Song {
       artist: json['artist'] as String,
       previewUrl: json['preview_url'] as String,
       canvasUrl: json['canvas_url'] as String,
+      externUrl: json['extern_url'] as String,
       uri: json['uri'] as String,
     );
   }
@@ -40,8 +37,6 @@ class Song {
   }
 
   void openInSpotify() async {
-    String url = "https://open.spotify.com/track/" + songId();
-
     if (Platform.isAndroid) {
       List<Map<String, String>> _installedApps =
           await AppAvailability.getInstalledApps();
@@ -55,9 +50,9 @@ class Song {
       }
 
       if (!spotifyInstalled) {
-        if (await canLaunch(url)) {
+        if (await canLaunch(externUrl)) {
           print("Spotify launched!");
-          await launch(url);
+          await launch(externUrl);
         } else {
           throw 'Could not launch Spotify';
         }
@@ -69,12 +64,16 @@ class Song {
         await intent.launch();
       }
     } else if (Platform.isIOS) {
-      AppAvailability.launchApp(url).then((_) {
+      AppAvailability.launchApp(externUrl).then((_) {
         print("Spotify launched!");
       }).catchError((err) {
         print(err);
       });
     }
+  }
+
+  void share() {
+    Share.share(externUrl);
   }
 
   @override

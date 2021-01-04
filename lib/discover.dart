@@ -137,7 +137,8 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
         _songs[_currentIdx].openInSpotify();
        break;
       case Interaction.SHARE:
-        // TODO
+        response = interact(_songs[_currentIdx], "share");
+        _songs[_currentIdx].share();
         break;
     }
     return response;

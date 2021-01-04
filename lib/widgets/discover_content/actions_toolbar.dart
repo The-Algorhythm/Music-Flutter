@@ -27,9 +27,9 @@ class ActionsToolbarState extends State<ActionsToolbar> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           _getLike(MusicAppIcons.heart),
-          _getOpenSpotify(MusicAppIcons.spotify),
-          _getAction(icon: MusicAppIcons.share),
-          _getAction(icon: Icons.more_horiz, size: 40.0),
+          _getAction(MusicAppIcons.spotify, Interaction.OPEN_SPOTIFY),
+          _getAction(MusicAppIcons.share, Interaction.SHARE),
+          _getAction(Icons.more_horiz, Interaction.MORE_OPTIONS, size: 40.0),
           Container(height: queryData.size.height / 3.75,),
         ])
     );
@@ -80,24 +80,14 @@ class ActionsToolbarState extends State<ActionsToolbar> {
     });
   }
 
-  Widget _getOpenSpotify(IconData icon) {
+  Widget _getAction(IconData icon, Interaction interactionType, {size: iconSize}) {
     return Container(
       width: iconContainerSize, height: iconContainerSize,
       child: IconButton(
-        icon: Icon(icon, size: iconSize, color: Colors.white),
+        icon: Icon(icon, size: size, color: Colors.white),
         onPressed: () async {
-          bool success = await widget.onInteraction(Interaction.OPEN_SPOTIFY);
+          bool success = await widget.onInteraction(interactionType);
         },
-      ),
-    );
-  }
-
-  Widget _getAction({IconData icon, double size=iconSize, Color color=Colors.white}) {
-    return Container(
-      width: iconContainerSize, height: iconContainerSize,
-      child: IconButton(
-          icon: Icon(icon, size: size, color: color),
-          onPressed: (){externalLike();},
       ),
     );
   }

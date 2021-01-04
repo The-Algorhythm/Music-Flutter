@@ -75,8 +75,9 @@ class _LikedSongsOverlayState extends State<LikedSongsOverlay> {
           IconButton(
             iconSize: 50,
             icon: Icon(MusicAppIcons.share, color: Colors.white),
-            onPressed: (){
-              //TODO add when share functionality is implemented
+            onPressed: () async {
+              bool response = await interact(widget.likedSongs[_index], "share");
+              widget.likedSongs[_index].share();
             },
           ),
         ],

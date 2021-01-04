@@ -39,6 +39,7 @@ dependencies:
   flutter_appavailability: ^0.0.21
   url_launcher: ^5.7.10
   android_intent: ^0.3.7+7
+  share: any
 
 dev_dependencies:
   flutter_test:
