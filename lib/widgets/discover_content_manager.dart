@@ -55,6 +55,13 @@ class ContentManagerState extends State<ContentManager> {
     });
  }
 
+  void skipPage() {
+    setState(() {
+      _currentIdx++;
+      _doJump = true;
+    });
+  }
+
   List<Widget> _getSongContentPages(songs) {
     return List.generate(songs.length,(i){
       Song song = songs[i];

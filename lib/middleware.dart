@@ -21,11 +21,20 @@ Future<List<Song>> getRecommendations({int numSongs = 100,
   return parseSongs(response.body, "recommendations");
 }
 
-Future<bool> interact(Song song, String type, {int listenLength}) async {
+Future<bool> interact(Song song, String type, {int listenLength, String objType="TRACK"}) async {
   SpotifyProfile profile = SpotifyProfile();
+  String spotifyId;
+  if(objType == "ARTIST") {
+    spotifyId = song.artistIds.join(",");
+  } else if(objType == "ALBUM") {
+    spotifyId = song.albumId;
+  } else if(objType == "TRACK") {
+    spotifyId = song.songId();
+  }
   Map<String, String> params = {
-    'type': type,
-    'song_id': song.songId(),
+    'interaction_type': type,
+    'spotify_id': spotifyId,
+    'object_type': objType,
   };
   if(listenLength != null) {
     params['listen_length'] = listenLength.toString();

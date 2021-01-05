@@ -9,21 +9,25 @@ class Song {
   final String title;
   final String album;
   final String albumArtUrl;
+  final String albumId;
   final String artist;
+  final List<String> artistIds;
   final String previewUrl;
   final String canvasUrl;
   final String externUrl;
   final String uri;
 
-  Song({this.title, this.album, this.albumArtUrl, this.artist, this.previewUrl,
-    this.canvasUrl, this.externUrl, this.uri});
+  Song({this.title, this.album, this.albumArtUrl, this.albumId, this.artist,
+    this.artistIds, this.previewUrl, this.canvasUrl, this.externUrl, this.uri});
 
   factory Song.fromJson(Map<String, dynamic> json) {
     return Song(
       title: json['song_title'] as String,
       album: json['album_title'] as String,
       albumArtUrl: json['album_art_url'] as String,
+      albumId: json['album_id'] as String,
       artist: json['artist'] as String,
+      artistIds: json['artist_ids'].cast<String>(),
       previewUrl: json['preview_url'] as String,
       canvasUrl: json['canvas_url'] as String,
       externUrl: json['extern_url'] as String,

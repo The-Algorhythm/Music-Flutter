@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:music_app/widgets/discover_content/more_options_sheet.dart';
 import 'package:music_app/widgets/discover_content/music_player.dart';
 import 'package:music_app/page_controller.dart';
 import 'package:music_app/widgets/discover_content_manager.dart';
@@ -130,7 +131,10 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
         response = _unlike();
         break;
       case Interaction.MORE_OPTIONS:
-        // TODO
+        ModalOptionsSheet(
+            _contentManagerState.currentState.skipPage,
+            _songs[_currentIdx]
+        ).showBottomSheet(context);
         break;
       case Interaction.OPEN_SPOTIFY:
         response = interact(_songs[_currentIdx], "open");
