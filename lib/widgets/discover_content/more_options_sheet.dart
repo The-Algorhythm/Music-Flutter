@@ -38,8 +38,8 @@ class ModalOptionsSheet {
   }
 
   Widget _getDislike(context, object) {
-    bool singular = currentSong.artistIds.length == 1;  // Change to plural when there are multiple artists
-    var artistsTextLst = [
+    bool singular = object != "artist" || currentSong.artistIds.length == 1;  // Change to plural when there are multiple artists
+    var message = [
       new TextSpan(text: singular ? "Recommend less like this ": "Recommend less like these "),
       new TextSpan(text: singular ? object: object+'s', style: new TextStyle(color: Color(0xFFc77dff)))
     ];
@@ -66,10 +66,7 @@ class ModalOptionsSheet {
                 fontSize: 17.0,
                 color: Colors.white,
               ),
-              children: object == "artist" ? artistsTextLst : [
-                new TextSpan(text: "Recommend less like this "),
-                new TextSpan(text: '$object', style: new TextStyle(color: Color(0xFFc77dff))),
-              ],
+              children: message,
             ),
           ),
         ),
@@ -79,7 +76,7 @@ class ModalOptionsSheet {
 
   // Show Flushbar to confirm a feedback request
   void _showConfirmation(context, object) {
-    bool singular = currentSong.artistIds.length == 1;  // Change to plural when there are multiple artists
+    bool singular = object != "artist" || currentSong.artistIds.length == 1;  // Change to plural when there are multiple artists
     String message = singular ? "Got it. We'll show you less like that $object in the future.":
     "Got it. We'll show you less like those "+object+"s in the future.";
     Flushbar(
@@ -94,7 +91,7 @@ class ModalOptionsSheet {
 
   // Show Flushbar for a duplicate feedback request
   void _showDupMessage(context, object) {
-    bool singular = currentSong.artistIds.length == 1;  // Change to plural when there are multiple artists
+    bool singular = object != "artist" || currentSong.artistIds.length == 1;  // Change to plural when there are multiple artists
     String message = singular ? "We're already recommending you less like that $object.":
     "We're already recommending you less like those "+object+"s.";
     Flushbar(
@@ -109,7 +106,7 @@ class ModalOptionsSheet {
 
   // Show Flushbar for a error with a feedback request
   void _showError(context, object) {
-    bool singular = currentSong.artistIds.length == 1;  // Change to plural when there are multiple artists
+    bool singular = object != "artist" || currentSong.artistIds.length == 1;  // Change to plural when there are multiple artists
     String message = singular ? "Something went wrong when trying to dislike this $object. Try again.":
     "Something went wrong when trying to dislike those "+object+"s. Try again.";
     Flushbar(
