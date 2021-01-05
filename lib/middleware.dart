@@ -21,7 +21,10 @@ Future<List<Song>> getRecommendations({int numSongs = 100,
   return parseSongs(response.body, "recommendations");
 }
 
-Future<bool> interact(Song song, String type, {int listenLength, String objType="TRACK"}) async {
+/// Send "interaction" request to backend (like, open, share, listen_length,
+/// and dislike). Takes Song as the object of the interaction, the type of
+/// interaction, and extra data such as listenLength and objType
+Future<int> interact(Song song, String type, {int listenLength, String objType="TRACK"}) async {
   SpotifyProfile profile = SpotifyProfile();
   String spotifyId;
   if(objType == "ARTIST") {
@@ -42,7 +45,7 @@ Future<bool> interact(Song song, String type, {int listenLength, String objType=
   var uri = Uri.http(baseUrl, '/interaction/', params);
   final headers = {"token": jsonEncode(profile.tokenInfo)};
   final response = await http.post(uri, headers: headers);
-  return response.statusCode == 200;
+  return response.statusCode;
 }
 
 Future<List<Song>> getLikedSongs() async {

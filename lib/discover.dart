@@ -151,7 +151,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
   Future<bool> _like() async {
     if(!_likedCurrentSong) {
       print("Liked song");
-      bool success = await interact(_songs[_currentIdx], "like");
+      bool success = await interact(_songs[_currentIdx], "like") == 200;
       if(success) {
         setState(() {
           _likedCurrentSong = true;
@@ -166,7 +166,7 @@ class DiscoverState extends State<Discover> with AutomaticKeepAliveClientMixin {
   Future<bool> _unlike() async {
     if(_likedCurrentSong) {
       print("Unliked song");
-      bool success = await interact(_songs[_currentIdx], "unlike");
+      bool success = await interact(_songs[_currentIdx], "unlike") == 200;
       if(success) {
         setState(() {
           _likedCurrentSong = false;

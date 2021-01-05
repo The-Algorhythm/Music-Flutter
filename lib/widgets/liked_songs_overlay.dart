@@ -68,7 +68,7 @@ class _LikedSongsOverlayState extends State<LikedSongsOverlay> {
             iconSize: 50,
             icon: Icon(MusicAppIcons.spotify, color: Colors.white),
             onPressed: () async {
-              bool response = await interact(widget.likedSongs[_index], "open");
+              bool response = await interact(widget.likedSongs[_index], "open") == 200;
               widget.likedSongs[_index].openInSpotify();
             },
           ),
@@ -76,7 +76,7 @@ class _LikedSongsOverlayState extends State<LikedSongsOverlay> {
             iconSize: 50,
             icon: Icon(MusicAppIcons.share, color: Colors.white),
             onPressed: () async {
-              bool response = await interact(widget.likedSongs[_index], "share");
+              bool response = await interact(widget.likedSongs[_index], "share") == 200;
               widget.likedSongs[_index].share();
             },
           ),
@@ -88,7 +88,7 @@ class _LikedSongsOverlayState extends State<LikedSongsOverlay> {
   void _heartPressed() async {
     if(_unlikedSongIdxs.contains(_index)) {
       // we have already unliked it, so relike it
-      bool success = await interact(widget.likedSongs[_index], "like");
+      bool success = await interact(widget.likedSongs[_index], "like") == 200;
       if(success) {
         setState(() {
           _unlikedSongIdxs.remove(_index);
@@ -98,7 +98,7 @@ class _LikedSongsOverlayState extends State<LikedSongsOverlay> {
       }
     } else {
       // We have liked it, so add it to the unliked songs list
-      bool success = await interact(widget.likedSongs[_index], "unlike");
+      bool success = await interact(widget.likedSongs[_index], "unlike") == 200;
       if(success) {
         setState(() {
           _unlikedSongIdxs.add(_index);
