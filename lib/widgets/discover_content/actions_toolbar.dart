@@ -86,7 +86,7 @@ class ActionsToolbarState extends State<ActionsToolbar> {
       child: IconButton(
         icon: Icon(icon, size: size, color: Colors.white),
         onPressed: () async {
-          bool success = await widget.onInteraction(interactionType);
+          bool success = await widget.onInteraction(interactionType) == 200;
         },
       ),
     );
